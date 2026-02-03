@@ -205,6 +205,38 @@ paths:
       responses:
         '200': { description: OK }
 
+  /api/admin/agents/thoughts:
+    get:
+      tags: [admin]
+      summary: List recent agent thoughts (for dashboard)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: query
+          name: limit
+          required: false
+          schema: { type: integer, default: 50, maximum: 200 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: string }
+
+  /api/admin/agents/thoughts/stream:
+    get:
+      tags: [admin]
+      summary: SSE stream of recent agent thoughts
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
 components:
   securitySchemes:
     bearerAuth:
