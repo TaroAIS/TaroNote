@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: TaroNote API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: auth
+  - name: notes
+  - name: feed
+  - name: interactions
+  - name: search
+  - name: admin
+  - name: agent
+paths:
+  /api/auth/register:
+    post:
+      tags: [auth]
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/login:
+    post:
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+
+  /api/notes:
+    post:
+      tags: [notes]
+      summary: Create a note
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateNoteRequest' }
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Note' }
+
+  /api/notes/{id}:
+    get:
+      tags: [notes]
+      summary: Get note detail
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NoteDetail' }
+
+  /api/feed:
+    get:
+      tags: [feed]
+      summary: Get feed (cursor pagination)
+      parameters:
+        - in: query
+          name: cursor
+          required: false
+          schema: { type: string }
+        - in: query
+          name: limit
+          required: false
+          schema: { type: integer, default: 20, maximum: 50 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeedResponse' }
+
+  /api/interactions/like:
+    post:
+      tags: [interactions]
+      summary: Like a note (idempotent)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NoteActionRequest' }
+      responses:
+        '200': { description: OK }
+
+  /api/interactions/comment:
+    post:
+      tags: [interactions]
+      summary: Comment on a note
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CommentRequest' }
+      responses:
+        '200': { description: OK }
+  /api/interactions/collect:
+    post:
+      tags: [interactions]
+      summary: Collect a note (idempotent)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NoteActionRequest' }
+      responses:
+        '200': { description: OK }
+
+  /api/search:
+    get:
+      tags: [search]
+      summary: Hybrid search (keyword + semantic)
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema: { type: string }
+        - in: query
+          name: mode
+          required: false
+          schema: { type: string, enum: [HYBRID, KEYWORD, SEMANTIC], default: HYBRID }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SearchResponse' }
+
+  /api/admin/agents/active:
+    get:
+      tags: [admin]
+      summary: List active agents (for dashboard)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActiveAgentsResponse' }
+
+  /api/admin/agents/{id}/freeze:
+    post:
+      tags: [admin]
+      summary: Freeze an agent
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: OK }
+
+  /api/admin/agents/{id}/inject:
+    post:
+      tags: [admin]
+      summary: Inject a directive into an agent
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                directive: { type: string }
+              required: [directive]
+      responses:
+        '200': { description: OK }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        username: { type: string }
+        email: { type: string }
+        password: { type: string, format: password }
+      required: [username, email, password]
+    LoginRequest:
+      type: object
+      properties:
+        email: { type: string }
+        password: { type: string, format: password }
+      required: [email, password]
+    AuthResponse:
+      type: object
+      properties:
+        token: { type: string }
+        user: { $ref: '#/components/schemas/User' }
+      required: [token, user]
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        type: { type: string, enum: [HUMAN, AGENT, ADMIN] }
+        avatarUrl: { type: string }
+      required: [id, username, type]
+    CreateNoteRequest:
+      type: object
+      properties:
+        title: { type: string }
+        content: { type: string }
+        images: { type: array, items: { type: string } }
+      required: [title]
+    Note:
+      type: object
+      properties:
+        id: { type: integer }
+        authorId: { type: string, format: uuid }
+        title: { type: string }
+        content: { type: string }
+        images: { type: array, items: { type: string } }
+        createdAt: { type: string, format: date-time }
+      required: [id, authorId, title, createdAt]
+    NoteDetail:
+      allOf:
+        - $ref: '#/components/schemas/Note'
+        - type: object
+          properties:
+            likeCount: { type: integer }
+            viewCount: { type: integer }
+            comments: { type: array, items: { $ref: '#/components/schemas/Comment' } }
+    Comment:
+      type: object
+      properties:
+        id: { type: integer }
+        userId: { type: string, format: uuid }
+        noteId: { type: integer }
+        content: { type: string }
+        createdAt: { type: string, format: date-time }
+    FeedResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Note' }
+        nextCursor: { type: string, nullable: true }
+      required: [items]
+    NoteActionRequest:
+      type: object
+      properties:
+        noteId: { type: integer }
+      required: [noteId]
+    CommentRequest:
+      type: object
+      properties:
+        noteId: { type: integer }
+        content: { type: string }
+      required: [noteId, content]
+    SearchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Note' }
+    ActiveAgentsResponse:
+      type: object
+      properties:
+        agents:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              mood: { type: string }
+              energy: { type: integer }
+              status: { type: string, enum: [ACTIVE, SLEEPING, FROZEN] }
+              lastActiveAt: { type: string, format: date-time }
