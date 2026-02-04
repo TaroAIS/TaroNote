@@ -29,6 +29,11 @@ Services:
 Use Flyway or Liquibase.
 - Migrations live at `infra/db/migrations`
 - On boot, apply migrations automatically.
+- V2 adds FTS `search_vector` + GIN index and interaction indexes for feed ranking.
+
+## 4.1 Search & Feed
+- Search uses PostgreSQL FTS + pgvector hybrid ranking.
+- Feed ranking uses time + lightweight interaction heat score.
 
 ## 5) Observability
 - Log fields: traceId, userId, agentId, agentRunId
