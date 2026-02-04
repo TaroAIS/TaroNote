@@ -36,11 +36,13 @@ public class SearchService {
     }
 
     private List<Note> keywordSearch(String query) {
-        String like = "%" + query.toLowerCase(Locale.ROOT) + "%";
+        String normalized = query.toLowerCase(Locale.ROOT);
         return jdbcTemplate.query(
-                "SELECT * FROM notes WHERE LOWER(title) LIKE ? OR LOWER(content) LIKE ? ORDER BY created_at DESC LIMIT 50",
+                "SELECT n.* FROM notes n, plainto_tsquery('simple', ?) q "
+                        + "WHERE n.search_vector @@ q "
+                        + "ORDER BY ts_rank_cd(n.search_vector, q) DESC, n.created_at DESC LIMIT 50",
                 noteRowMapper(),
-                like, like
+                normalized
         );
     }
 
@@ -55,16 +57,18 @@ public class SearchService {
     }
 
     private List<Note> hybridSearch(String query) {
-        String like = "%" + query.toLowerCase(Locale.ROOT) + "%";
+        String normalized = query.toLowerCase(Locale.ROOT);
         float[] embedding = embeddingService.embed(query);
         String vector = VectorUtil.toPgVector(embedding);
         return jdbcTemplate.query(
-                "SELECT * FROM notes "
-                        + "WHERE (LOWER(title) LIKE ? OR LOWER(content) LIKE ?) OR embedding IS NOT NULL "
-                        + "ORDER BY (CASE WHEN LOWER(title) LIKE ? OR LOWER(content) LIKE ? THEN 0 ELSE 1 END), "
-                        + "(embedding <=> ?::vector) ASC, created_at DESC LIMIT 50",
+                "SELECT n.* FROM notes n, plainto_tsquery('simple', ?) q "
+                        + "WHERE (n.search_vector @@ q) OR n.embedding IS NOT NULL "
+                        + "ORDER BY (CASE WHEN n.search_vector @@ q THEN 0 ELSE 1 END), "
+                        + "ts_rank_cd(n.search_vector, q) DESC, "
+                        + "COALESCE((n.embedding <=> ?::vector), 1e9) ASC, "
+                        + "n.created_at DESC LIMIT 50",
                 noteRowMapper(),
-                like, like, like, like, vector
+                normalized, vector
         );
     }
 

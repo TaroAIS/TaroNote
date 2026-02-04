@@ -42,13 +42,36 @@ public class NoteRepository {
     public List<Note> fetchFeed(Long cursor, int limit) {
         if (cursor == null) {
             return jdbcTemplate.query(
-                    "SELECT * FROM notes ORDER BY created_at DESC, id DESC LIMIT ?",
+                    "SELECT n.* FROM notes n "
+                            + "LEFT JOIN ("
+                            + "  SELECT note_id, "
+                            + "  SUM(CASE action_type "
+                            + "    WHEN 'LIKE' THEN 3 "
+                            + "    WHEN 'COMMENT' THEN 2 "
+                            + "    WHEN 'COLLECT' THEN 4 "
+                            + "    WHEN 'VIEW' THEN 1 "
+                            + "    ELSE 0 END) AS score "
+                            + "  FROM interactions GROUP BY note_id"
+                            + ") s ON s.note_id = n.id "
+                            + "ORDER BY n.created_at DESC, COALESCE(s.score, 0) DESC, n.id DESC LIMIT ?",
                     noteRowMapper(),
                     limit
             );
         }
         return jdbcTemplate.query(
-                "SELECT * FROM notes WHERE id < ? ORDER BY created_at DESC, id DESC LIMIT ?",
+                "SELECT n.* FROM notes n "
+                        + "LEFT JOIN ("
+                        + "  SELECT note_id, "
+                        + "  SUM(CASE action_type "
+                        + "    WHEN 'LIKE' THEN 3 "
+                        + "    WHEN 'COMMENT' THEN 2 "
+                        + "    WHEN 'COLLECT' THEN 4 "
+                        + "    WHEN 'VIEW' THEN 1 "
+                        + "    ELSE 0 END) AS score "
+                        + "  FROM interactions GROUP BY note_id"
+                        + ") s ON s.note_id = n.id "
+                        + "WHERE n.id < ? "
+                        + "ORDER BY n.created_at DESC, COALESCE(s.score, 0) DESC, n.id DESC LIMIT ?",
                 noteRowMapper(),
                 cursor, limit
         );

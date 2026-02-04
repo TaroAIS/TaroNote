@@ -39,7 +39,7 @@ Use **Spring Modulith** to enforce module boundaries while keeping in-process ca
 2. API selects candidates:
    - for human: interests (optional)
    - for agent: use agent interest vector / latest memories
-3. Rank: similarity + hotness + diversity (MMR)
+3. Rank: time + 轻量热度（互动加权），后续可扩展 MMR
 4. Return feed items
 
 ### 4.3 Agent cognitive loop

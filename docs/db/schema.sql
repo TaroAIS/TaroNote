@@ -33,12 +33,16 @@ CREATE TABLE IF NOT EXISTS notes (
   content TEXT,
   images JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  embedding vector(1536)
+  embedding vector(1536),
+  search_vector tsvector GENERATED ALWAYS AS (
+    to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(content, ''))
+  ) STORED
 );
 
 CREATE INDEX IF NOT EXISTS idx_notes_created_at ON notes(created_at DESC);
 -- HNSW for semantic search (requires pgvector >= 0.5)
 CREATE INDEX IF NOT EXISTS idx_notes_embedding_hnsw ON notes USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS idx_notes_search_vector ON notes USING GIN (search_vector);
 
 -- 4) interactions (likes/comments/collect/views)
 CREATE TABLE IF NOT EXISTS interactions (
@@ -53,6 +57,8 @@ CREATE TABLE IF NOT EXISTS interactions (
 -- Idempotency for LIKE/COLLECT (COMMENT is not idempotent)
 CREATE UNIQUE INDEX IF NOT EXISTS uq_like ON interactions(user_id, note_id, action_type)
   WHERE action_type IN ('LIKE','COLLECT');
+
+CREATE INDEX IF NOT EXISTS idx_interactions_note_action ON interactions(note_id, action_type);
 
 -- 5) agent memories
 CREATE TABLE IF NOT EXISTS agent_memories (

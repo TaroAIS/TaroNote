@@ -28,6 +28,10 @@ public class AgentToolService {
         interactionPort.collect(agentId, noteId);
     }
 
+    public void view(UUID agentId, long noteId) {
+        interactionPort.view(agentId, noteId);
+    }
+
     public void createNote(UUID agentId, String title, String content, List<String> images) {
         contentPort.create(agentId, title, content, images);
     }

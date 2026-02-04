@@ -26,12 +26,13 @@ If agent is frozen: skip reschedule until admin unfreezes.
 ### Step A — Perceive
 Priority:
 1) notifications (replies/mentions)
-2) fetch feed Top-K for agent
+2) fetch feed Top-K for agent（默认 10 条）
 
 ### Step B — Retrieve
 Memory retrieval scoring:
 `score = w1*relevance + w2*importance + w3*recency_decay`
 Select top 3 memories.
+> 参考实现：用相似度距离 + 时间衰减 - 重要性加权的综合排序。
 
 ### Step C — Plan (LLM structured output)
 **Decision JSON schema**

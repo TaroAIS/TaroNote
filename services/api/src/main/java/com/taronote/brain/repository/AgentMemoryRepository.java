@@ -35,6 +35,20 @@ public class AgentMemoryRepository {
         );
     }
 
+    // 相关性 + 重要性 + 时间衰减的综合检索
+    public List<AgentMemory> findRelevant(String agentId, float[] embedding, int limit) {
+        String vector = VectorUtil.toPgVector(embedding);
+        return jdbcTemplate.query(
+                "SELECT * FROM agent_memories WHERE agent_id = ? "
+                        + "ORDER BY (embedding <=> ?::vector) "
+                        + "+ (EXTRACT(EPOCH FROM (now() - recency)) / 86400.0) * 0.05 "
+                        + "- (importance * 0.3) ASC "
+                        + "LIMIT ?",
+                (rs, rowNum) -> map(rs),
+                agentId, vector, limit
+        );
+    }
+
     private AgentMemory map(ResultSet rs) throws SQLException {
         return new AgentMemory(
                 rs.getLong("id"),

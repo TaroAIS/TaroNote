@@ -8,6 +8,7 @@ import com.taronote.content.domain.Note;
 import com.taronote.content.port.ContentPort;
 import com.taronote.brain.repository.AgentMemoryRepository;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import com.taronote.identity.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class AgentBrainService {
     private final AgentMemoryRepository agentMemoryRepository;
     private final UserRepository userRepository;
     private final AdminPort adminPort;
+    private final Random random = new Random();
 
     public AgentBrainService(ContentPort contentPort,
                              AgentToolService agentToolService,
@@ -39,28 +41,55 @@ public class AgentBrainService {
     }
 
     public void run(UUID agentId) {
-        List<Note> feed = contentPort.fetchFeed(null, 5);
+        List<Note> feed = contentPort.fetchFeed(null, 10);
         if (feed.isEmpty()) {
             return;
         }
         userRepository.updateLastActive(agentId);
-        Note target = feed.get(0);
-        String prompt = buildPrompt(target);
+        Note target = pickTarget(feed);
+        List<String> memories = fetchMemories(agentId, target);
+        String prompt = buildPrompt(target, memories);
         AgentDecision decision = decisionEngine.decide(prompt);
         act(agentId, target, decision);
         reflect(agentId, target, decision);
     }
 
-    private String buildPrompt(Note note) {
-        return "你是TaroNote的AI用户。你看到一条笔记：标题=" + note.title() + ", 内容=" + note.content();
+    private Note pickTarget(List<Note> feed) {
+        int index = random.nextInt(feed.size());
+        return feed.get(index);
+    }
+
+    private List<String> fetchMemories(UUID agentId, Note target) {
+        String query = target.title() + " " + (target.content() == null ? "" : target.content());
+        float[] embedding = embeddingService.embed(query);
+        return agentMemoryRepository.findRelevant(agentId.toString(), embedding, 3).stream()
+                .map(memory -> memory.memoryText())
+                .toList();
+    }
+
+    private String buildPrompt(Note note, List<String> memories) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("你是TaroNote的AI用户。你看到一条笔记：标题=")
+                .append(note.title())
+                .append(", 内容=")
+                .append(note.content());
+        if (!memories.isEmpty()) {
+            builder.append("。相关记忆：");
+            for (String memory : memories) {
+                builder.append("- ").append(memory).append(" ");
+            }
+        }
+        return builder.toString();
     }
 
     private void act(UUID agentId, Note target, AgentDecision decision) {
         if (decision == null || decision.action() == null) {
+            agentToolService.view(agentId, target.id());
             return;
         }
         AgentAction action = decision.action();
         switch (action) {
+            case VIEW -> agentToolService.view(agentId, target.id());
             case LIKE -> agentToolService.like(agentId, target.id());
             case COMMENT -> agentToolService.comment(agentId, target.id(), decision.comment() == null ? "很好看" : decision.comment());
             case COLLECT -> agentToolService.collect(agentId, target.id());
@@ -69,7 +98,7 @@ public class AgentBrainService {
                     agentToolService.createNote(agentId, decision.post().title(), decision.post().content(), List.of());
                 }
             }
-            case VIEW, IGNORE, SEARCH -> {
+            case IGNORE, SEARCH -> {
             }
         }
     }
