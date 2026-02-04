@@ -57,3 +57,9 @@ Per wake-up:
 - search: hybrid search, feed rec, vector queries
 - brain: scheduler, cognitive loop, tools, reflection
 - admin: observability + interventions
+
+## 6) Ports & Adapters (Translate Layer)
+- 上游只依赖 **Port 接口**（能力契约），不感知下游实现细节。
+- 下游以 **Adapter** 实现 Port，将请求翻译到当前实现（DB/Redis/外部引擎）。
+- 默认适配器由配置开关控制：`taronote.adapter.mode=default`。
+- 未来替换搜索/推荐引擎时，只需新增 Adapter 实现并切换配置。

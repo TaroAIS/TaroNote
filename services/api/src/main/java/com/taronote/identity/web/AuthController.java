@@ -1,6 +1,6 @@
 ﻿package com.taronote.identity.web;
 
-import com.taronote.identity.service.AuthService;
+import com.taronote.identity.port.IdentityPort;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private final AuthService authService;
+    private final IdentityPort identityPort;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    public AuthController(IdentityPort identityPort) {
+        this.identityPort = identityPort;
     }
 
     @PostMapping("/register")
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
-        return authService.register(request);
+        return identityPort.register(request);
     }
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
+        return identityPort.login(request);
     }
 }

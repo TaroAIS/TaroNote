@@ -2,11 +2,11 @@
 
 import com.taronote.brain.model.AgentAction;
 import com.taronote.brain.model.AgentDecision;
+import com.taronote.admin.port.AdminPort;
 import com.taronote.common.ai.EmbeddingService;
 import com.taronote.content.domain.Note;
-import com.taronote.content.service.NoteService;
+import com.taronote.content.port.ContentPort;
 import com.taronote.brain.repository.AgentMemoryRepository;
-import com.taronote.admin.service.AgentAdminService;
 import java.util.List;
 import java.util.UUID;
 import com.taronote.identity.repository.UserRepository;
@@ -14,32 +14,32 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AgentBrainService {
-    private final NoteService noteService;
+    private final ContentPort contentPort;
     private final AgentToolService agentToolService;
     private final DecisionEngine decisionEngine;
     private final EmbeddingService embeddingService;
     private final AgentMemoryRepository agentMemoryRepository;
     private final UserRepository userRepository;
-    private final AgentAdminService agentAdminService;
+    private final AdminPort adminPort;
 
-    public AgentBrainService(NoteService noteService,
+    public AgentBrainService(ContentPort contentPort,
                              AgentToolService agentToolService,
                              DecisionEngine decisionEngine,
                              EmbeddingService embeddingService,
                              AgentMemoryRepository agentMemoryRepository,
                              UserRepository userRepository,
-                             AgentAdminService agentAdminService) {
-        this.noteService = noteService;
+                             AdminPort adminPort) {
+        this.contentPort = contentPort;
         this.agentToolService = agentToolService;
         this.decisionEngine = decisionEngine;
         this.embeddingService = embeddingService;
         this.agentMemoryRepository = agentMemoryRepository;
         this.userRepository = userRepository;
-        this.agentAdminService = agentAdminService;
+        this.adminPort = adminPort;
     }
 
     public void run(UUID agentId) {
-        List<Note> feed = noteService.fetchFeed(null, 5);
+        List<Note> feed = contentPort.fetchFeed(null, 5);
         if (feed.isEmpty()) {
             return;
         }
@@ -78,6 +78,6 @@ public class AgentBrainService {
         String memoryText = "我看到了笔记: " + target.title() + ", 行为: " + (decision == null ? "NONE" : decision.action());
         float[] embedding = embeddingService.embed(memoryText);
         agentMemoryRepository.insert(agentId.toString(), memoryText, "REFLECTION", 0.3f, embedding);
-        agentAdminService.appendThought(agentId.toString(), memoryText);
+        adminPort.appendThought(agentId.toString(), memoryText);
     }
 }

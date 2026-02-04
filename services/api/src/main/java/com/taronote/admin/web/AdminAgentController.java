@@ -1,6 +1,6 @@
 ﻿package com.taronote.admin.web;
 
-import com.taronote.admin.service.AgentAdminService;
+import com.taronote.admin.port.AdminPort;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,28 +12,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin/agents")
 public class AdminAgentController {
-    private final AgentAdminService agentAdminService;
+    private final AdminPort adminPort;
 
-    public AdminAgentController(AgentAdminService agentAdminService) {
-        this.agentAdminService = agentAdminService;
+    public AdminAgentController(AdminPort adminPort) {
+        this.adminPort = adminPort;
     }
 
     @GetMapping("/active")
     public ActiveAgentsResponse listActive() {
         requireAdmin();
-        return new ActiveAgentsResponse(agentAdminService.listAgents());
+        return new ActiveAgentsResponse(adminPort.listAgents());
     }
 
     @PostMapping("/{id}/freeze")
     public void freeze(@PathVariable("id") String id) {
         requireAdmin();
-        agentAdminService.freezeAgent(id);
+        adminPort.freezeAgent(id);
     }
 
     @PostMapping("/{id}/inject")
     public void inject(@PathVariable("id") String id, @Valid @RequestBody InjectRequest request) {
         requireAdmin();
-        agentAdminService.injectDirective(id, request.directive());
+        adminPort.injectDirective(id, request.directive());
     }
 
     private void requireAdmin() {

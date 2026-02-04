@@ -32,6 +32,10 @@ agent:
     jitter-ratio: 0.2
     max-llm-concurrency: 32
 
+taronote:
+  adapter:
+    mode: default
+
 logging:
   level:
     com.taronote: INFO

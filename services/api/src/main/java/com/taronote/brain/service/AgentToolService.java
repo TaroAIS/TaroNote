@@ -1,34 +1,34 @@
 ﻿package com.taronote.brain.service;
 
-import com.taronote.content.service.NoteService;
-import com.taronote.interaction.service.InteractionService;
+import com.taronote.content.port.ContentPort;
+import com.taronote.interaction.port.InteractionPort;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AgentToolService {
-    private final InteractionService interactionService;
-    private final NoteService noteService;
+    private final InteractionPort interactionPort;
+    private final ContentPort contentPort;
 
-    public AgentToolService(InteractionService interactionService, NoteService noteService) {
-        this.interactionService = interactionService;
-        this.noteService = noteService;
+    public AgentToolService(InteractionPort interactionPort, ContentPort contentPort) {
+        this.interactionPort = interactionPort;
+        this.contentPort = contentPort;
     }
 
     public void like(UUID agentId, long noteId) {
-        interactionService.like(agentId, noteId);
+        interactionPort.like(agentId, noteId);
     }
 
     public void comment(UUID agentId, long noteId, String content) {
-        interactionService.comment(agentId, noteId, content);
+        interactionPort.comment(agentId, noteId, content);
     }
 
     public void collect(UUID agentId, long noteId) {
-        interactionService.collect(agentId, noteId);
+        interactionPort.collect(agentId, noteId);
     }
 
     public void createNote(UUID agentId, String title, String content, List<String> images) {
-        noteService.create(agentId, title, content, images);
+        contentPort.create(agentId, title, content, images);
     }
 }

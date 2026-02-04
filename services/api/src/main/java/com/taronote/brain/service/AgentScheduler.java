@@ -1,6 +1,7 @@
 ﻿package com.taronote.brain.service;
 
-import com.taronote.admin.service.AgentAdminService;
+import com.taronote.admin.port.AdminPort;
+import com.taronote.brain.port.AgentBrainPort;
 import com.taronote.identity.domain.UserType;
 import com.taronote.identity.repository.UserRepository;
 import java.time.Duration;
@@ -25,9 +26,9 @@ public class AgentScheduler {
     private static final String SCHEDULE_KEY = "agent:schedule";
 
     private final StringRedisTemplate redisTemplate;
-    private final AgentBrainService agentBrainService;
+    private final AgentBrainPort agentBrainPort;
     private final UserRepository userRepository;
-    private final AgentAdminService agentAdminService;
+    private final AdminPort adminPort;
     private final ExecutorService executor;
     private final int batchSize;
     private final Duration baseInterval;
@@ -35,16 +36,16 @@ public class AgentScheduler {
     private final Random random = new Random();
 
     public AgentScheduler(StringRedisTemplate redisTemplate,
-                          AgentBrainService agentBrainService,
+                          AgentBrainPort agentBrainPort,
                           UserRepository userRepository,
-                          AgentAdminService agentAdminService,
+                          AdminPort adminPort,
                           @Value("${agent.scheduler.batch-size:32}") int batchSize,
                           @Value("${agent.scheduler.base-interval-seconds:1800}") long baseIntervalSeconds,
                           @Value("${agent.scheduler.jitter-ratio:0.2}") double jitterRatio) {
         this.redisTemplate = redisTemplate;
-        this.agentBrainService = agentBrainService;
+        this.agentBrainPort = agentBrainPort;
         this.userRepository = userRepository;
-        this.agentAdminService = agentAdminService;
+        this.adminPort = adminPort;
         this.batchSize = batchSize;
         this.baseInterval = Duration.ofSeconds(baseIntervalSeconds);
         this.jitterRatio = jitterRatio;
@@ -79,16 +80,16 @@ public class AgentScheduler {
     }
 
     private void runAgent(String agentId) {
-        if (agentAdminService.isFrozen(agentId)) {
+        if (adminPort.isFrozen(agentId)) {
             return;
         }
         try {
-            agentBrainService.run(UUID.fromString(agentId));
+            agentBrainPort.run(UUID.fromString(agentId));
         } catch (Exception ex) {
             log.warn("Agent run failed: {}", ex.getMessage());
         } finally {
             long next = System.currentTimeMillis() + jitteredInterval();
-            if (!agentAdminService.isFrozen(agentId)) {
+            if (!adminPort.isFrozen(agentId)) {
                 schedule(agentId, next);
             }
         }
