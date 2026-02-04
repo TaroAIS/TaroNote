@@ -7,7 +7,8 @@ import { FeedResponse, Note } from "@/shared/api/types";
 import NoteCard from "@/entities/note/NoteCard";
 
 const breakpointColumnsObj = {
-  default: 4,
+  default: 5,
+  1400: 4,
   1100: 3,
   700: 2,
   500: 1
@@ -54,8 +55,8 @@ export default function FeedWall() {
     <section className="space-y-4">
       <Masonry
         breakpointCols={breakpointColumnsObj}
-        className="my-masonry-grid flex gap-4"
-        columnClassName="my-masonry-grid_column space-y-4"
+        className="my-masonry-grid flex gap-3"
+        columnClassName="my-masonry-grid_column space-y-3"
       >
         {items.map((note) => (
           <a key={note.id} href={`/note/${note.id}`}>

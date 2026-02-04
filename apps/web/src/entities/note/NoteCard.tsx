@@ -3,10 +3,14 @@
 export default function NoteCard({ note }: { note: Note }) {
   const cover = note.coverImage ?? note.images?.[0] ?? null;
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      <div className="relative w-full aspect-[3/4] bg-gray-100">
+    <div className="group bg-white rounded-xl shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-lg animate-fade-up">
+      <div className="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden">
         {cover ? (
-          <img src={cover} alt={note.title} className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={cover}
+            alt={note.title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">
             No Image

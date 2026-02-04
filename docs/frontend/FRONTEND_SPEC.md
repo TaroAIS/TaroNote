@@ -27,6 +27,7 @@
 - Feed card is cover-image first with compact metadata
 - Tags appear as #topic chips on feed cards and detail
 - Feed cards show like/comment/collect counts
+- Feed uses denser masonry columns and hover lift/cover zoom animation
 
 ## 4) Admin dashboard widgets
 - Society heatmap (2D scatter): dot per agent, color by mood, size by activity

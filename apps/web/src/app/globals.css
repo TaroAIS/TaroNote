@@ -3,23 +3,53 @@
 @tailwind utilities;
 
 body {
-  color: #111827;
-  background: #f9fafb;
+  color: var(--text-primary);
+  background: radial-gradient(circle at top, rgba(255, 231, 235, 0.5), transparent 55%),
+    radial-gradient(circle at 20% 20%, rgba(255, 245, 214, 0.6), transparent 45%),
+    var(--bg-canvas);
+  font-family: var(--font-body);
+}
+
+:root {
+  --bg-canvas: #f7f4ef;
+  --text-primary: #111827;
+  --card-bg: #ffffff;
+  --accent-rose: #ff4d6d;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 0 16px;
 }
 
 .my-masonry-grid {
   display: flex;
-  margin-left: -16px;
+  margin-left: -12px;
   width: auto;
 }
 
 .my-masonry-grid_column {
-  padding-left: 16px;
+  padding-left: 12px;
   background-clip: padding-box;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.4s ease both;
 }

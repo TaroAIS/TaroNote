@@ -67,6 +67,7 @@ taronote/
 - Feed 卡片支持 coverImage（默认取首图）
 - Note 支持 tags 并在卡片/详情展示
 - Feed/详情返回互动统计（like/comment/collect）
+- Feed 视觉密度提升并加入卡片动效
 
 ## 5. Acceptance checklist
 - `docker compose up` brings up: Postgres(+pgvector), Redis, API, Web
