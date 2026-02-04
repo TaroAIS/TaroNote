@@ -112,3 +112,9 @@ Docs:
 - `docs/CHANGELOG_RECENT.md`
 
 Commit: `9f387b3`
+
+## 10) Testing TODOs
+Docs:
+- Added `docs/TODO_TESTING.md` with test checklist and success criteria.
+
+Commit: (pending)
