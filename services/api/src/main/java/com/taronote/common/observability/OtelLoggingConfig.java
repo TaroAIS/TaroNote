@@ -22,8 +22,8 @@ import org.springframework.context.annotation.Configuration;
 public class OtelLoggingConfig {
     private static final String DEFAULT_PROTOCOL = "grpc";
 
-    @Bean
-    public OpenTelemetry openTelemetry(
+    @Bean(destroyMethod = "close")
+    public SdkLoggerProvider loggerProvider(
             @Value("${spring.application.name:taronote-api}") String serviceName,
             @Value("${taronote.logging.otlp-endpoint:}") String endpoint,
             @Value("${taronote.logging.otlp-protocol:}") String protocol) {
@@ -31,10 +31,14 @@ public class OtelLoggingConfig {
                 AttributeKey.stringKey("service.name"), serviceName
         )));
         LogRecordExporter exporter = buildExporter(endpoint, protocol);
-        SdkLoggerProvider loggerProvider = SdkLoggerProvider.builder()
+        return SdkLoggerProvider.builder()
                 .setResource(resource)
                 .addLogRecordProcessor(BatchLogRecordProcessor.builder(exporter).build())
                 .build();
+    }
+
+    @Bean
+    public OpenTelemetry openTelemetry(SdkLoggerProvider loggerProvider) {
         OpenTelemetrySdk sdk = OpenTelemetrySdk.builder()
                 .setLoggerProvider(loggerProvider)
                 .build();

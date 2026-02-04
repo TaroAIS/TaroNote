@@ -10,7 +10,6 @@ import com.taronote.content.domain.NoteDetail;
 import com.taronote.content.repository.NoteRepository;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,11 +53,8 @@ public class NoteService {
 
     public FeedSlice fetchFeed(String cursor, int limit) {
         FeedCursor feedCursor = parseCursor(cursor);
-        List<NoteRepository.FeedRow> rows = noteRepository.fetchFeed(feedCursor, limit);
-        List<Note> items = rows.stream()
-                .map(NoteRepository.FeedRow::note)
-                .collect(Collectors.toList());
-        String nextCursor = rows.isEmpty() ? null : formatCursor(rows.get(rows.size() - 1));
+        List<Note> items = noteRepository.fetchFeed(feedCursor, limit);
+        String nextCursor = items.isEmpty() ? null : formatCursor(items.get(items.size() - 1));
         return new FeedSlice(items, nextCursor);
     }
 
@@ -67,13 +63,12 @@ public class NoteService {
             return null;
         }
         if (cursor.contains("|")) {
-            String[] parts = cursor.split("\\|", 3);
-            if (parts.length == 3) {
+            String[] parts = cursor.split("\\|", 2);
+            if (parts.length == 2) {
                 try {
                     long createdAtMillis = Long.parseLong(parts[0]);
-                    long score = Long.parseLong(parts[1]);
-                    long id = Long.parseLong(parts[2]);
-                    return new FeedCursor(java.time.Instant.ofEpochMilli(createdAtMillis), score, id);
+                    long id = Long.parseLong(parts[1]);
+                    return new FeedCursor(java.time.Instant.ofEpochMilli(createdAtMillis), id);
                 } catch (NumberFormatException ignored) {
                     return null;
                 }
@@ -88,8 +83,8 @@ public class NoteService {
         }
     }
 
-    private String formatCursor(NoteRepository.FeedRow row) {
-        long createdAtMillis = row.note().createdAt().toEpochMilli();
-        return createdAtMillis + "|" + row.score() + "|" + row.note().id();
+    private String formatCursor(Note note) {
+        long createdAtMillis = note.createdAt().toEpochMilli();
+        return createdAtMillis + "|" + note.id();
     }
 }

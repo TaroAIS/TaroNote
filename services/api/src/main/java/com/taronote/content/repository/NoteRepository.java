@@ -41,61 +41,28 @@ public class NoteRepository {
         return rows.stream().findFirst();
     }
 
-    public List<FeedRow> fetchFeed(FeedCursor cursor, int limit) {
+    public List<Note> fetchFeed(FeedCursor cursor, int limit) {
         if (cursor == null) {
             return jdbcTemplate.query(
-                    "SELECT n.*, COALESCE(s.score, 0) AS score FROM notes n "
-                            + "LEFT JOIN ("
-                            + "  SELECT note_id, "
-                            + "  SUM(CASE action_type "
-                            + "    WHEN 'LIKE' THEN 3 "
-                            + "    WHEN 'COMMENT' THEN 2 "
-                            + "    WHEN 'COLLECT' THEN 4 "
-                            + "    WHEN 'VIEW' THEN 1 "
-                            + "    ELSE 0 END)::bigint AS score "
-                            + "  FROM interactions GROUP BY note_id"
-                            + ") s ON s.note_id = n.id "
-                            + "ORDER BY n.created_at DESC, COALESCE(s.score, 0) DESC, n.id DESC LIMIT ?",
-                    feedRowMapper(),
+                    "SELECT * FROM notes ORDER BY created_at DESC, id DESC LIMIT ?",
+                    noteRowMapper(),
                     limit
             );
         }
         return jdbcTemplate.query(
-                "SELECT n.*, COALESCE(s.score, 0) AS score FROM notes n "
-                        + "LEFT JOIN ("
-                        + "  SELECT note_id, "
-                        + "  SUM(CASE action_type "
-                        + "    WHEN 'LIKE' THEN 3 "
-                        + "    WHEN 'COMMENT' THEN 2 "
-                        + "    WHEN 'COLLECT' THEN 4 "
-                        + "    WHEN 'VIEW' THEN 1 "
-                        + "    ELSE 0 END)::bigint AS score "
-                        + "  FROM interactions GROUP BY note_id"
-                        + ") s ON s.note_id = n.id "
-                        + "WHERE (n.created_at, COALESCE(s.score, 0), n.id) < (?::timestamptz, ?::bigint, ?::bigint) "
-                        + "ORDER BY n.created_at DESC, COALESCE(s.score, 0) DESC, n.id DESC LIMIT ?",
-                feedRowMapper(),
-                Timestamp.from(cursor.createdAt()), cursor.score(), cursor.id(), limit
+                "SELECT * FROM notes "
+                        + "WHERE (created_at, id) < (?::timestamptz, ?::bigint) "
+                        + "ORDER BY created_at DESC, id DESC LIMIT ?",
+                noteRowMapper(),
+                Timestamp.from(cursor.createdAt()), cursor.id(), limit
         );
     }
 
     public Optional<FeedCursor> findFeedCursorById(long id) {
         List<FeedCursor> rows = jdbcTemplate.query(
-                "SELECT n.created_at, COALESCE(s.score, 0) AS score, n.id FROM notes n "
-                        + "LEFT JOIN ("
-                        + "  SELECT note_id, "
-                        + "  SUM(CASE action_type "
-                        + "    WHEN 'LIKE' THEN 3 "
-                        + "    WHEN 'COMMENT' THEN 2 "
-                        + "    WHEN 'COLLECT' THEN 4 "
-                        + "    WHEN 'VIEW' THEN 1 "
-                        + "    ELSE 0 END)::bigint AS score "
-                        + "  FROM interactions GROUP BY note_id"
-                        + ") s ON s.note_id = n.id "
-                        + "WHERE n.id = ?",
+                "SELECT created_at, id FROM notes WHERE id = ?",
                 (rs, rowNum) -> new FeedCursor(
                         rs.getTimestamp("created_at").toInstant(),
-                        rs.getLong("score"),
                         rs.getLong("id")
                 ),
                 id
@@ -131,9 +98,6 @@ public class NoteRepository {
         return (rs, rowNum) -> mapNote(rs);
     }
 
-    private RowMapper<FeedRow> feedRowMapper() {
-        return (rs, rowNum) -> new FeedRow(mapNote(rs), rs.getLong("score"));
-    }
 
     private Note mapNote(ResultSet rs) throws SQLException {
         String imagesJson = rs.getString("images");
@@ -148,6 +112,4 @@ public class NoteRepository {
         );
     }
 
-    public record FeedRow(Note note, long score) {
-    }
 }
