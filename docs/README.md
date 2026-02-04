@@ -62,6 +62,7 @@ taronote/
 - API adapter notes: `docs/ADAPTER_LAYER.docx`
 - Ports & Adapters 默认适配器由 `taronote.adapter.mode=default` 控制
 - Search 采用 FTS + pgvector 混合排序；Feed 采用时间 + 轻量热度排序
+- LoggingPort 提供结构化日志能力，默认 SLF4J 适配器
 
 ## 5. Acceptance checklist
 - `docker compose up` brings up: Postgres(+pgvector), Redis, API, Web

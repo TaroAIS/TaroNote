@@ -3,11 +3,14 @@
 import com.taronote.brain.model.AgentAction;
 import com.taronote.brain.model.AgentDecision;
 import com.taronote.admin.port.AdminPort;
+import com.taronote.common.port.LoggingPort;
 import com.taronote.common.ai.EmbeddingService;
 import com.taronote.content.domain.Note;
 import com.taronote.content.port.ContentPort;
 import com.taronote.brain.repository.AgentMemoryRepository;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import com.taronote.identity.repository.UserRepository;
@@ -22,6 +25,7 @@ public class AgentBrainService {
     private final AgentMemoryRepository agentMemoryRepository;
     private final UserRepository userRepository;
     private final AdminPort adminPort;
+    private final LoggingPort loggingPort;
     private final Random random = new Random();
 
     public AgentBrainService(ContentPort contentPort,
@@ -30,7 +34,8 @@ public class AgentBrainService {
                              EmbeddingService embeddingService,
                              AgentMemoryRepository agentMemoryRepository,
                              UserRepository userRepository,
-                             AdminPort adminPort) {
+                             AdminPort adminPort,
+                             LoggingPort loggingPort) {
         this.contentPort = contentPort;
         this.agentToolService = agentToolService;
         this.decisionEngine = decisionEngine;
@@ -38,6 +43,7 @@ public class AgentBrainService {
         this.agentMemoryRepository = agentMemoryRepository;
         this.userRepository = userRepository;
         this.adminPort = adminPort;
+        this.loggingPort = loggingPort;
     }
 
     public void run(UUID agentId) {
@@ -50,6 +56,7 @@ public class AgentBrainService {
         List<String> memories = fetchMemories(agentId, target);
         String prompt = buildPrompt(target, memories);
         AgentDecision decision = decisionEngine.decide(prompt);
+        loggingPort.info("agent.decision", decisionFields(agentId, target, decision));
         act(agentId, target, decision);
         reflect(agentId, target, decision);
     }
@@ -101,6 +108,14 @@ public class AgentBrainService {
             case IGNORE, SEARCH -> {
             }
         }
+    }
+
+    private Map<String, Object> decisionFields(UUID agentId, Note target, AgentDecision decision) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("agentId", agentId);
+        fields.put("noteId", target.id());
+        fields.put("action", decision == null ? "NONE" : decision.action());
+        return fields;
     }
 
     private void reflect(UUID agentId, Note target, AgentDecision decision) {

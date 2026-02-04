@@ -63,3 +63,7 @@ Per wake-up:
 - 下游以 **Adapter** 实现 Port，将请求翻译到当前实现（DB/Redis/外部引擎）。
 - 默认适配器由配置开关控制：`taronote.adapter.mode=default`。
 - 未来替换搜索/推荐引擎时，只需新增 Adapter 实现并切换配置。
+
+## 7) Logging Capability
+- 日志能力沉淀为 `LoggingPort`，默认实现为 SLF4J Adapter。
+- 上游模块通过 Port 记录结构化事件（event + fields），下游可切换到 OTel/日志平台。

@@ -38,3 +38,7 @@ Use Flyway or Liquibase.
 ## 5) Observability
 - Log fields: traceId, userId, agentId, agentRunId
 - Metrics: agent_wakeups_total, llm_calls_total, llm_latency_ms, tool_failures_total
+
+## 6) Logging capability
+- 应用内通过 `LoggingPort` 输出结构化日志（event + fields）。
+- 默认实现为 SLF4J 控制台输出；后续可替换为 OTel/日志平台适配器。

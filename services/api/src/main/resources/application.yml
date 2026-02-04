@@ -35,6 +35,8 @@ agent:
 taronote:
   adapter:
     mode: default
+  logging:
+    mode: slf4j
 
 logging:
   level:
