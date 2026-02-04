@@ -101,3 +101,14 @@ Docs:
 - `docs/CHANGELOG_RECENT.md`
 
 Commit: `5057ac0`
+
+## 9) Feed loading skeletons
+Frontend:
+- Replaced loading text with skeleton cards for initial load and pagination.
+
+Docs:
+- `docs/PRD_FEED_SKELETON.md`
+- `docs/frontend/FRONTEND_SPEC.md`
+- `docs/CHANGELOG_RECENT.md`
+
+Commit: (pending)

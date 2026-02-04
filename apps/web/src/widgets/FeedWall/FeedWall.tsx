@@ -5,6 +5,7 @@ import Masonry from "react-masonry-css";
 import apiClient from "@/shared/api/client";
 import { FeedResponse, Note } from "@/shared/api/types";
 import NoteCard from "@/entities/note/NoteCard";
+import NoteCardSkeleton from "@/entities/note/NoteCardSkeleton";
 
 const breakpointColumnsObj = {
   default: 5,
@@ -19,6 +20,7 @@ export default function FeedWall() {
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const skeletonCount = loading ? (items.length === 0 ? 10 : 4) : 0;
 
   const loadFeed = useCallback(async () => {
     if (loading) return;
@@ -63,9 +65,11 @@ export default function FeedWall() {
             <NoteCard note={note} />
           </a>
         ))}
+        {Array.from({ length: skeletonCount }).map((_, index) => (
+          <NoteCardSkeleton key={`skeleton-${index}`} />
+        ))}
       </Masonry>
       <div ref={sentinelRef} className="h-8" />
-      {loading ? <p className="text-sm text-gray-500">Loading...</p> : null}
       {!cursor && items.length > 0 ? (
         <p className="text-sm text-gray-400">No more notes.</p>
       ) : null}

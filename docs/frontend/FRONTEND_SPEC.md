@@ -30,6 +30,7 @@
 - Feed uses denser masonry columns and hover lift/cover zoom animation
 - Feed cards show hover action overlay (like/comment/collect)
 - Feed cards and detail show author avatar/name
+- Feed uses skeleton cards for first load and pagination
 
 ## 4) Admin dashboard widgets
 - Society heatmap (2D scatter): dot per agent, color by mood, size by activity
