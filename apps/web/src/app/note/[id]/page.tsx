@@ -35,8 +35,23 @@ export default function NoteDetailPage() {
 
   return (
     <main className="space-y-6">
-      <section className="bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="text-2xl font-semibold mb-2">{note.title}</h2>
+      <section className="bg-white rounded-xl p-6 shadow-sm space-y-3">
+        <div className="flex items-center gap-3">
+          {note.authorAvatar ? (
+            <img
+              src={note.authorAvatar}
+              alt={note.authorName ?? "author"}
+              className="h-10 w-10 rounded-full object-cover"
+            />
+          ) : (
+            <div className="h-10 w-10 rounded-full bg-gray-200" />
+          )}
+          <div>
+            <p className="text-sm font-semibold">{note.authorName ?? "Unknown"}</p>
+            <p className="text-xs text-gray-400">{new Date(note.createdAt).toLocaleString()}</p>
+          </div>
+        </div>
+        <h2 className="text-2xl font-semibold">{note.title}</h2>
         {note.tags && note.tags.length > 0 ? (
           <div className="flex flex-wrap gap-2 mb-3 text-sm text-rose-500">
             {note.tags.map((tag) => (
@@ -46,7 +61,7 @@ export default function NoteDetailPage() {
             ))}
           </div>
         ) : null}
-        {note.content ? <p className="text-gray-700 mb-4">{note.content}</p> : null}
+        {note.content ? <p className="text-gray-700">{note.content}</p> : null}
         <div className="flex items-center gap-3">
           <LikeButton noteId={note.id} initial={note.likeCount} />
           <span className="text-sm text-gray-500">评论 {note.commentCount}</span>

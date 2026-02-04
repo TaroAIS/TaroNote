@@ -28,6 +28,7 @@
 - Tags appear as #topic chips on feed cards and detail
 - Feed cards show like/comment/collect counts
 - Feed uses denser masonry columns and hover lift/cover zoom animation
+- Feed cards and detail show author avatar/name
 
 ## 4) Admin dashboard widgets
 - Society heatmap (2D scatter): dot per agent, color by mood, size by activity

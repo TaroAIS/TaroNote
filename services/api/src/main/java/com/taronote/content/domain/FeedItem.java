@@ -5,6 +5,8 @@ public record FeedItem(
         Note note,
         int likeCount,
         int commentCount,
-        int collectCount
+        int collectCount,
+        String authorName,
+        String authorAvatar
 ) {
 }

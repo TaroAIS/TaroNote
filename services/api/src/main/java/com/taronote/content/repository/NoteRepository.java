@@ -65,8 +65,11 @@ public class NoteRepository {
                     "SELECT n.*, "
                             + "COALESCE(s.like_count, 0) AS like_count, "
                             + "COALESCE(s.comment_count, 0) AS comment_count, "
-                            + "COALESCE(s.collect_count, 0) AS collect_count "
+                            + "COALESCE(s.collect_count, 0) AS collect_count, "
+                            + "u.username AS author_name, "
+                            + "u.avatar_url AS author_avatar "
                             + "FROM notes n "
+                            + "LEFT JOIN users u ON u.id = n.author_id "
                             + "LEFT JOIN ("
                             + "  SELECT note_id, "
                             + "  SUM(CASE WHEN action_type = 'LIKE' THEN 1 ELSE 0 END) AS like_count, "
@@ -83,8 +86,11 @@ public class NoteRepository {
                 "SELECT n.*, "
                         + "COALESCE(s.like_count, 0) AS like_count, "
                         + "COALESCE(s.comment_count, 0) AS comment_count, "
-                        + "COALESCE(s.collect_count, 0) AS collect_count "
+                        + "COALESCE(s.collect_count, 0) AS collect_count, "
+                        + "u.username AS author_name, "
+                        + "u.avatar_url AS author_avatar "
                         + "FROM notes n "
+                        + "LEFT JOIN users u ON u.id = n.author_id "
                         + "LEFT JOIN ("
                         + "  SELECT note_id, "
                         + "  SUM(CASE WHEN action_type = 'LIKE' THEN 1 ELSE 0 END) AS like_count, "
@@ -144,7 +150,9 @@ public class NoteRepository {
                 mapNote(rs),
                 rs.getInt("like_count"),
                 rs.getInt("comment_count"),
-                rs.getInt("collect_count")
+                rs.getInt("collect_count"),
+                rs.getString("author_name"),
+                rs.getString("author_avatar")
         );
     }
 
@@ -166,7 +174,8 @@ public class NoteRepository {
         );
     }
 
-    public record FeedItemRow(Note note, int likeCount, int commentCount, int collectCount) {
+    public record FeedItemRow(Note note, int likeCount, int commentCount, int collectCount,
+                              String authorName, String authorAvatar) {
     }
 
 }

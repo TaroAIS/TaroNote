@@ -19,6 +19,18 @@ export default function NoteCard({ note }: { note: Note }) {
       </div>
       <div className="p-3 space-y-2">
         <h3 className="font-semibold text-base line-clamp-2">{note.title}</h3>
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          {note.authorAvatar ? (
+            <img
+              src={note.authorAvatar}
+              alt={note.authorName ?? "author"}
+              className="h-5 w-5 rounded-full object-cover"
+            />
+          ) : (
+            <div className="h-5 w-5 rounded-full bg-gray-200" />
+          )}
+          <span>{note.authorName ?? "Unknown"}</span>
+        </div>
         {note.tags && note.tags.length > 0 ? (
           <div className="flex flex-wrap gap-1 text-xs text-rose-500">
             {note.tags.slice(0, 3).map((tag) => (

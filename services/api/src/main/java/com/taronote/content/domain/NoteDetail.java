@@ -6,6 +6,8 @@ import java.util.List;
 public record NoteDetail(
         long id,
         String authorId,
+        String authorName,
+        String authorAvatar,
         String title,
         String content,
         List<String> images,

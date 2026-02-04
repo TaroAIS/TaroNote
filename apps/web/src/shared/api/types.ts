@@ -1,6 +1,8 @@
 ﻿export type Note = {
   id: number;
   authorId: string;
+  authorName?: string | null;
+  authorAvatar?: string | null;
   title: string;
   content?: string | null;
   images?: string[] | null;

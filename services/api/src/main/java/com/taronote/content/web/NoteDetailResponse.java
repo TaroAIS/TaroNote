@@ -8,6 +8,8 @@ import java.util.List;
 public record NoteDetailResponse(
         long id,
         String authorId,
+        String authorName,
+        String authorAvatar,
         String title,
         String content,
         List<String> images,
@@ -27,6 +29,8 @@ public record NoteDetailResponse(
         return new NoteDetailResponse(
                 detail.id(),
                 detail.authorId(),
+                detail.authorName(),
+                detail.authorAvatar(),
                 detail.title(),
                 detail.content(),
                 detail.images(),

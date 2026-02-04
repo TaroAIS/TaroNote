@@ -10,6 +10,7 @@ import com.taronote.content.domain.FeedSummarySlice;
 import com.taronote.content.domain.Note;
 import com.taronote.content.domain.NoteDetail;
 import com.taronote.content.repository.NoteRepository;
+import com.taronote.identity.repository.UserRepository;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,16 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final EmbeddingService embeddingService;
     private final ModerationService moderationService;
+    private final UserRepository userRepository;
 
-    public NoteService(NoteRepository noteRepository, EmbeddingService embeddingService, ModerationService moderationService) {
+    public NoteService(NoteRepository noteRepository,
+                       EmbeddingService embeddingService,
+                       ModerationService moderationService,
+                       UserRepository userRepository) {
         this.noteRepository = noteRepository;
         this.embeddingService = embeddingService;
         this.moderationService = moderationService;
+        this.userRepository = userRepository;
     }
 
     public Note create(UUID authorId, String title, String content, List<String> images, List<String> tags) {
@@ -39,6 +45,16 @@ public class NoteService {
 
     public NoteDetail getDetail(long id) {
         Note note = noteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Note not found"));
+        String authorName = null;
+        String authorAvatar = null;
+        try {
+            var author = userRepository.findById(note.authorId());
+            if (author.isPresent()) {
+                authorName = author.get().username();
+                authorAvatar = author.get().avatarUrl();
+            }
+        } catch (Exception ignored) {
+        }
         int likeCount = noteRepository.countByAction(id, "LIKE");
         int viewCount = noteRepository.countByAction(id, "VIEW");
         int commentCount = noteRepository.countByAction(id, "COMMENT");
@@ -47,6 +63,8 @@ public class NoteService {
         return new NoteDetail(
                 note.id(),
                 note.authorId().toString(),
+                authorName,
+                authorAvatar,
                 note.title(),
                 note.content(),
                 note.images(),
@@ -72,7 +90,14 @@ public class NoteService {
         FeedCursor feedCursor = parseCursor(cursor);
         List<NoteRepository.FeedItemRow> rows = noteRepository.fetchFeedSummary(feedCursor, limit);
         List<FeedItem> items = rows.stream()
-                .map(row -> new FeedItem(row.note(), row.likeCount(), row.commentCount(), row.collectCount()))
+                .map(row -> new FeedItem(
+                        row.note(),
+                        row.likeCount(),
+                        row.commentCount(),
+                        row.collectCount(),
+                        row.authorName(),
+                        row.authorAvatar()
+                ))
                 .toList();
         String nextCursor = rows.isEmpty() ? null : formatCursor(rows.get(rows.size() - 1).note());
         return new FeedSummarySlice(items, nextCursor);

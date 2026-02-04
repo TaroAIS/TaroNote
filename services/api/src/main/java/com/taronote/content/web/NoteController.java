@@ -39,7 +39,14 @@ public class NoteController {
         int safeLimit = Math.min(Math.max(limit, 1), 50);
         var slice = contentPort.fetchFeedSummary(cursor, safeLimit);
         List<NoteResponse> items = slice.items().stream()
-                .map(item -> NoteResponse.from(item.note(), item.likeCount(), item.commentCount(), item.collectCount()))
+                .map(item -> NoteResponse.from(
+                        item.note(),
+                        item.likeCount(),
+                        item.commentCount(),
+                        item.collectCount(),
+                        item.authorName(),
+                        item.authorAvatar()
+                ))
                 .toList();
         return new FeedResponse(items, slice.nextCursor());
     }

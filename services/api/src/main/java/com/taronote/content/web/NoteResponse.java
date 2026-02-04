@@ -7,6 +7,8 @@ import java.util.List;
 public record NoteResponse(
         long id,
         String authorId,
+        String authorName,
+        String authorAvatar,
         String title,
         String content,
         List<String> images,
@@ -21,6 +23,8 @@ public record NoteResponse(
         return new NoteResponse(
                 note.id(),
                 note.authorId().toString(),
+                null,
+                null,
                 note.title(),
                 note.content(),
                 note.images(),
@@ -37,6 +41,27 @@ public record NoteResponse(
         return new NoteResponse(
                 note.id(),
                 note.authorId().toString(),
+                null,
+                null,
+                note.title(),
+                note.content(),
+                note.images(),
+                note.coverImage(),
+                note.tags(),
+                likeCount,
+                commentCount,
+                collectCount,
+                note.createdAt()
+        );
+    }
+
+    public static NoteResponse from(Note note, int likeCount, int commentCount, int collectCount,
+                                    String authorName, String authorAvatar) {
+        return new NoteResponse(
+                note.id(),
+                note.authorId().toString(),
+                authorName,
+                authorAvatar,
                 note.title(),
                 note.content(),
                 note.images(),

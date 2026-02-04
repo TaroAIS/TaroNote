@@ -284,6 +284,8 @@ components:
       properties:
         id: { type: integer }
         authorId: { type: string, format: uuid }
+        authorName: { type: string }
+        authorAvatar: { type: string }
         title: { type: string }
         content: { type: string }
         images: { type: array, items: { type: string } }
