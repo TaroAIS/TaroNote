@@ -2,6 +2,7 @@ package com.taronote.common.observability;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.exporter.otlp.logs.OtlpGrpcLogRecordExporter;
 import io.opentelemetry.exporter.otlp.logs.OtlpHttpLogRecordExporter;
@@ -10,7 +11,6 @@ import io.opentelemetry.sdk.logs.SdkLoggerProvider;
 import io.opentelemetry.sdk.logs.export.BatchLogRecordProcessor;
 import io.opentelemetry.sdk.logs.export.LogRecordExporter;
 import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.sdk.resources.ResourceAttributes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ public class OtelLoggingConfig {
             @Value("${taronote.logging.otlp-endpoint:}") String endpoint,
             @Value("${taronote.logging.otlp-protocol:}") String protocol) {
         Resource resource = Resource.getDefault().merge(Resource.create(Attributes.of(
-                ResourceAttributes.SERVICE_NAME, serviceName
+                AttributeKey.stringKey("service.name"), serviceName
         )));
         LogRecordExporter exporter = buildExporter(endpoint, protocol);
         SdkLoggerProvider loggerProvider = SdkLoggerProvider.builder()
