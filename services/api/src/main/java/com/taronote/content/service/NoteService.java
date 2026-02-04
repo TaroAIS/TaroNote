@@ -24,13 +24,14 @@ public class NoteService {
         this.moderationService = moderationService;
     }
 
-    public Note create(UUID authorId, String title, String content, List<String> images) {
+    public Note create(UUID authorId, String title, String content, List<String> images, List<String> tags) {
         moderationService.assertSafe(title);
         moderationService.assertSafe(content);
         float[] embedding = embeddingService.embed(title + " " + (content == null ? "" : content));
         List<String> safeImages = images == null ? List.of() : images;
+        List<String> safeTags = tags == null ? List.of() : tags;
         String coverImage = safeImages.isEmpty() ? null : safeImages.get(0);
-        long id = noteRepository.create(authorId, title, content, safeImages, coverImage, embedding);
+        long id = noteRepository.create(authorId, title, content, safeImages, coverImage, safeTags, embedding);
         return noteRepository.findById(id).orElseThrow();
     }
 
@@ -45,6 +46,8 @@ public class NoteService {
                 note.title(),
                 note.content(),
                 note.images(),
+                note.coverImage(),
+                note.tags(),
                 note.createdAt(),
                 likeCount,
                 viewCount,

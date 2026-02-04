@@ -15,6 +15,15 @@ export default function NoteCard({ note }: { note: Note }) {
       </div>
       <div className="p-3 space-y-2">
         <h3 className="font-semibold text-base line-clamp-2">{note.title}</h3>
+        {note.tags && note.tags.length > 0 ? (
+          <div className="flex flex-wrap gap-1 text-xs text-rose-500">
+            {note.tags.slice(0, 3).map((tag) => (
+              <span key={tag} className="rounded-full bg-rose-50 px-2 py-0.5">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
         {note.content ? (
           <p className="text-sm text-gray-600 line-clamp-3">{note.content}</p>
         ) : null}

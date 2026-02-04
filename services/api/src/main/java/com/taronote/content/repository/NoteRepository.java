@@ -25,14 +25,15 @@ public class NoteRepository {
         this.jsonUtil = jsonUtil;
     }
 
-    public long create(UUID authorId, String title, String content, List<String> images, String coverImage, float[] embedding) {
+    public long create(UUID authorId, String title, String content, List<String> images, String coverImage, List<String> tags, float[] embedding) {
         String imagesJson = jsonUtil.toJson(images);
+        String tagsJson = jsonUtil.toJson(tags);
         String vector = VectorUtil.toPgVector(embedding);
         return jdbcTemplate.queryForObject(
-                "INSERT INTO notes (author_id, title, content, images, cover_image, embedding) "
-                        + "VALUES (?, ?, ?, ?::jsonb, ?, ?::vector) RETURNING id",
+                "INSERT INTO notes (author_id, title, content, images, cover_image, tags, embedding) "
+                        + "VALUES (?, ?, ?, ?::jsonb, ?, ?::jsonb, ?::vector) RETURNING id",
                 Long.class,
-                authorId, title, content, imagesJson, coverImage, vector
+                authorId, title, content, imagesJson, coverImage, tagsJson, vector
         );
     }
 
@@ -102,6 +103,8 @@ public class NoteRepository {
     private Note mapNote(ResultSet rs) throws SQLException {
         String imagesJson = rs.getString("images");
         List<String> images = jsonUtil.readStringList(imagesJson);
+        String tagsJson = rs.getString("tags");
+        List<String> tags = jsonUtil.readStringList(tagsJson);
         return new Note(
                 rs.getLong("id"),
                 UUID.fromString(rs.getString("author_id")),
@@ -109,6 +112,7 @@ public class NoteRepository {
                 rs.getString("content"),
                 images,
                 rs.getString("cover_image"),
+                tags,
                 rs.getTimestamp("created_at").toInstant()
         );
     }

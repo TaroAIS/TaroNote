@@ -26,13 +26,14 @@ public class ContentAdapter implements ContentPort {
     }
 
     @Override
-    public Note create(UUID authorId, String title, String content, List<String> images) {
-        Note note = noteService.create(authorId, title, content, images);
+    public Note create(UUID authorId, String title, String content, List<String> images, List<String> tags) {
+        Note note = noteService.create(authorId, title, content, images, tags);
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("authorId", authorId);
         fields.put("noteId", note.id());
         fields.put("titleLength", title == null ? 0 : title.length());
         fields.put("hasImages", images != null && !images.isEmpty());
+        fields.put("tagCount", tags == null ? 0 : tags.size());
         loggingPort.info("content.create", fields);
         return note;
     }

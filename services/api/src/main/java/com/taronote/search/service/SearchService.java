@@ -79,6 +79,8 @@ public class SearchService {
     private Note mapNote(ResultSet rs) throws SQLException {
         String imagesJson = rs.getString("images");
         List<String> images = jsonUtil.readStringList(imagesJson);
+        String tagsJson = rs.getString("tags");
+        List<String> tags = jsonUtil.readStringList(tagsJson);
         return new Note(
                 rs.getLong("id"),
                 UUID.fromString(rs.getString("author_id")),
@@ -86,6 +88,7 @@ public class SearchService {
                 rs.getString("content"),
                 images,
                 rs.getString("cover_image"),
+                tags,
                 rs.getTimestamp("created_at").toInstant()
         );
     }

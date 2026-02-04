@@ -31,6 +31,7 @@ Use Flyway or Liquibase.
 - On boot, apply migrations automatically.
 - V2 adds FTS `search_vector` + GIN index and interaction indexes for feed ranking.
 - V3 adds `cover_image` for feed cover.
+- V4 adds `tags` for notes.
 
 ## 4.1 Search & Feed
 - Search uses PostgreSQL FTS + pgvector hybrid ranking.

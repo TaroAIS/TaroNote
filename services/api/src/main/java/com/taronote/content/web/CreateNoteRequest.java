@@ -6,6 +6,7 @@ import java.util.List;
 public record CreateNoteRequest(
         @NotBlank String title,
         String content,
-        List<String> images
+        List<String> images,
+        List<String> tags
 ) {
 }

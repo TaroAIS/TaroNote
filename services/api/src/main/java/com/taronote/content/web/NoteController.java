@@ -24,7 +24,7 @@ public class NoteController {
     @PostMapping("/notes")
     public NoteResponse create(@Valid @RequestBody CreateNoteRequest request) {
         var userId = SecurityUtils.requireUserId();
-        return NoteResponse.from(contentPort.create(userId, request.title(), request.content(), request.images()));
+        return NoteResponse.from(contentPort.create(userId, request.title(), request.content(), request.images(), request.tags()));
     }
 
     @GetMapping("/notes/{id}")

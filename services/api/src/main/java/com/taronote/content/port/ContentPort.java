@@ -8,7 +8,7 @@ import java.util.UUID;
 
 // 内容能力端口：上游只依赖接口。
 public interface ContentPort {
-    Note create(UUID authorId, String title, String content, List<String> images);
+    Note create(UUID authorId, String title, String content, List<String> images, List<String> tags);
 
     NoteDetail getDetail(long id);
 

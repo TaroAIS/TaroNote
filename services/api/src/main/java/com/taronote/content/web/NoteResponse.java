@@ -11,6 +11,7 @@ public record NoteResponse(
         String content,
         List<String> images,
         String coverImage,
+        List<String> tags,
         Instant createdAt
 ) {
     public static NoteResponse from(Note note) {
@@ -21,6 +22,7 @@ public record NoteResponse(
                 note.content(),
                 note.images(),
                 note.coverImage(),
+                note.tags(),
                 note.createdAt()
         );
     }

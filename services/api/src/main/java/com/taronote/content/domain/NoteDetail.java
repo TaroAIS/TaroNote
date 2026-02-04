@@ -9,6 +9,8 @@ public record NoteDetail(
         String title,
         String content,
         List<String> images,
+        String coverImage,
+        List<String> tags,
         Instant createdAt,
         int likeCount,
         int viewCount,

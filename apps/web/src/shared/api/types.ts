@@ -5,6 +5,7 @@
   content?: string | null;
   images?: string[] | null;
   coverImage?: string | null;
+  tags?: string[] | null;
   createdAt: string;
 };
 

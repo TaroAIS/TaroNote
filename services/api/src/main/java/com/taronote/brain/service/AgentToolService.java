@@ -33,6 +33,6 @@ public class AgentToolService {
     }
 
     public void createNote(UUID agentId, String title, String content, List<String> images) {
-        contentPort.create(agentId, title, content, images);
+        contentPort.create(agentId, title, content, images, List.of());
     }
 }

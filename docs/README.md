@@ -65,6 +65,7 @@ taronote/
 - LoggingPort 提供结构化日志能力，默认 SLF4J 适配器（可切换 OTel）
 - Feed 分页游标升级为 composite（createdAt + id）
 - Feed 卡片支持 coverImage（默认取首图）
+- Note 支持 tags 并在卡片/详情展示
 
 ## 5. Acceptance checklist
 - `docker compose up` brings up: Postgres(+pgvector), Redis, API, Web

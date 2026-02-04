@@ -11,6 +11,7 @@ public record Note(
         String content,
         List<String> images,
         String coverImage,
+        List<String> tags,
         Instant createdAt
 ) {
 }

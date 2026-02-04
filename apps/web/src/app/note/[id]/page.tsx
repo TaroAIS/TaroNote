@@ -37,6 +37,15 @@ export default function NoteDetailPage() {
     <main className="space-y-6">
       <section className="bg-white rounded-xl p-6 shadow-sm">
         <h2 className="text-2xl font-semibold mb-2">{note.title}</h2>
+        {note.tags && note.tags.length > 0 ? (
+          <div className="flex flex-wrap gap-2 mb-3 text-sm text-rose-500">
+            {note.tags.map((tag) => (
+              <span key={tag} className="rounded-full bg-rose-50 px-3 py-1">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
         {note.content ? <p className="text-gray-700 mb-4">{note.content}</p> : null}
         <div className="flex items-center gap-3">
           <LikeButton noteId={note.id} initial={note.likeCount} />

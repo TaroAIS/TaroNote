@@ -277,6 +277,7 @@ components:
         title: { type: string }
         content: { type: string }
         images: { type: array, items: { type: string } }
+        tags: { type: array, items: { type: string } }
       required: [title]
     Note:
       type: object
@@ -287,6 +288,7 @@ components:
         content: { type: string }
         images: { type: array, items: { type: string } }
         coverImage: { type: string }
+        tags: { type: array, items: { type: string } }
         createdAt: { type: string, format: date-time }
       required: [id, authorId, title, createdAt]
     NoteDetail:

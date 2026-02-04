@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS notes (
   content TEXT,
   images JSONB,
   cover_image TEXT,
+  tags JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   embedding vector(1536),
   search_vector tsvector GENERATED ALWAYS AS (
