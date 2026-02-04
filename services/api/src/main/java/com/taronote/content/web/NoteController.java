@@ -29,6 +29,7 @@ public class NoteController {
 
     @GetMapping("/notes/{id}")
     public NoteDetailResponse getDetail(@PathVariable("id") long id) {
+        // Map domain detail into a stable response DTO.
         return NoteDetailResponse.from(noteService.getDetail(id));
     }
 

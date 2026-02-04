@@ -4,6 +4,7 @@ import com.taronote.content.domain.NoteDetail;
 import java.time.Instant;
 import java.util.List;
 
+// API response DTO for note detail; keeps external fields stable.
 public record NoteDetailResponse(
         long id,
         String authorId,

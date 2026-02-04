@@ -3,6 +3,7 @@ package com.taronote.content.web;
 import com.taronote.content.domain.Comment;
 import java.time.Instant;
 
+// API response DTO: decouples domain comment from external contract.
 public record CommentResponse(
         long id,
         String userId,
