@@ -59,6 +59,46 @@ public class NoteRepository {
         );
     }
 
+    public List<FeedItemRow> fetchFeedSummary(FeedCursor cursor, int limit) {
+        if (cursor == null) {
+            return jdbcTemplate.query(
+                    "SELECT n.*, "
+                            + "COALESCE(s.like_count, 0) AS like_count, "
+                            + "COALESCE(s.comment_count, 0) AS comment_count, "
+                            + "COALESCE(s.collect_count, 0) AS collect_count "
+                            + "FROM notes n "
+                            + "LEFT JOIN ("
+                            + "  SELECT note_id, "
+                            + "  SUM(CASE WHEN action_type = 'LIKE' THEN 1 ELSE 0 END) AS like_count, "
+                            + "  SUM(CASE WHEN action_type = 'COMMENT' THEN 1 ELSE 0 END) AS comment_count, "
+                            + "  SUM(CASE WHEN action_type = 'COLLECT' THEN 1 ELSE 0 END) AS collect_count "
+                            + "  FROM interactions GROUP BY note_id"
+                            + ") s ON s.note_id = n.id "
+                            + "ORDER BY n.created_at DESC, n.id DESC LIMIT ?",
+                    feedItemRowMapper(),
+                    limit
+            );
+        }
+        return jdbcTemplate.query(
+                "SELECT n.*, "
+                        + "COALESCE(s.like_count, 0) AS like_count, "
+                        + "COALESCE(s.comment_count, 0) AS comment_count, "
+                        + "COALESCE(s.collect_count, 0) AS collect_count "
+                        + "FROM notes n "
+                        + "LEFT JOIN ("
+                        + "  SELECT note_id, "
+                        + "  SUM(CASE WHEN action_type = 'LIKE' THEN 1 ELSE 0 END) AS like_count, "
+                        + "  SUM(CASE WHEN action_type = 'COMMENT' THEN 1 ELSE 0 END) AS comment_count, "
+                        + "  SUM(CASE WHEN action_type = 'COLLECT' THEN 1 ELSE 0 END) AS collect_count "
+                        + "  FROM interactions GROUP BY note_id"
+                        + ") s ON s.note_id = n.id "
+                        + "WHERE (n.created_at, n.id) < (?::timestamptz, ?::bigint) "
+                        + "ORDER BY n.created_at DESC, n.id DESC LIMIT ?",
+                feedItemRowMapper(),
+                Timestamp.from(cursor.createdAt()), cursor.id(), limit
+        );
+    }
+
     public Optional<FeedCursor> findFeedCursorById(long id) {
         List<FeedCursor> rows = jdbcTemplate.query(
                 "SELECT created_at, id FROM notes WHERE id = ?",
@@ -99,6 +139,15 @@ public class NoteRepository {
         return (rs, rowNum) -> mapNote(rs);
     }
 
+    private RowMapper<FeedItemRow> feedItemRowMapper() {
+        return (rs, rowNum) -> new FeedItemRow(
+                mapNote(rs),
+                rs.getInt("like_count"),
+                rs.getInt("comment_count"),
+                rs.getInt("collect_count")
+        );
+    }
+
 
     private Note mapNote(ResultSet rs) throws SQLException {
         String imagesJson = rs.getString("images");
@@ -115,6 +164,9 @@ public class NoteRepository {
                 tags,
                 rs.getTimestamp("created_at").toInstant()
         );
+    }
+
+    public record FeedItemRow(Note note, int likeCount, int commentCount, int collectCount) {
     }
 
 }

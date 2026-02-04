@@ -6,6 +6,9 @@
   images?: string[] | null;
   coverImage?: string | null;
   tags?: string[] | null;
+  likeCount?: number;
+  commentCount?: number;
+  collectCount?: number;
   createdAt: string;
 };
 
@@ -19,6 +22,8 @@ export type Comment = {
 
 export type NoteDetail = Note & {
   likeCount: number;
+  commentCount: number;
+  collectCount: number;
   viewCount: number;
   comments: Comment[];
 };

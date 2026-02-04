@@ -289,6 +289,9 @@ components:
         images: { type: array, items: { type: string } }
         coverImage: { type: string }
         tags: { type: array, items: { type: string } }
+        likeCount: { type: integer }
+        commentCount: { type: integer }
+        collectCount: { type: integer }
         createdAt: { type: string, format: date-time }
       required: [id, authorId, title, createdAt]
     NoteDetail:

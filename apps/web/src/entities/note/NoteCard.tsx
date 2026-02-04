@@ -27,6 +27,11 @@ export default function NoteCard({ note }: { note: Note }) {
         {note.content ? (
           <p className="text-sm text-gray-600 line-clamp-3">{note.content}</p>
         ) : null}
+        <div className="flex gap-3 text-xs text-gray-400">
+          <span>赞 {note.likeCount ?? 0}</span>
+          <span>评 {note.commentCount ?? 0}</span>
+          <span>藏 {note.collectCount ?? 0}</span>
+        </div>
         <div className="text-xs text-gray-400">{new Date(note.createdAt).toLocaleString()}</div>
       </div>
     </div>

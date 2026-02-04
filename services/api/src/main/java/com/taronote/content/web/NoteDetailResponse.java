@@ -15,6 +15,8 @@ public record NoteDetailResponse(
         List<String> tags,
         Instant createdAt,
         int likeCount,
+        int commentCount,
+        int collectCount,
         int viewCount,
         List<CommentResponse> comments
 ) {
@@ -32,6 +34,8 @@ public record NoteDetailResponse(
                 detail.tags(),
                 detail.createdAt(),
                 detail.likeCount(),
+                detail.commentCount(),
+                detail.collectCount(),
                 detail.viewCount(),
                 items
         );

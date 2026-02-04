@@ -66,6 +66,7 @@ taronote/
 - Feed 分页游标升级为 composite（createdAt + id）
 - Feed 卡片支持 coverImage（默认取首图）
 - Note 支持 tags 并在卡片/详情展示
+- Feed/详情返回互动统计（like/comment/collect）
 
 ## 5. Acceptance checklist
 - `docker compose up` brings up: Postgres(+pgvector), Redis, API, Web

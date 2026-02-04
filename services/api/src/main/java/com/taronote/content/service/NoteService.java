@@ -4,7 +4,9 @@ import com.taronote.common.ai.EmbeddingService;
 import com.taronote.common.moderation.ModerationService;
 import com.taronote.content.domain.Comment;
 import com.taronote.content.domain.FeedCursor;
+import com.taronote.content.domain.FeedItem;
 import com.taronote.content.domain.FeedSlice;
+import com.taronote.content.domain.FeedSummarySlice;
 import com.taronote.content.domain.Note;
 import com.taronote.content.domain.NoteDetail;
 import com.taronote.content.repository.NoteRepository;
@@ -39,6 +41,8 @@ public class NoteService {
         Note note = noteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Note not found"));
         int likeCount = noteRepository.countByAction(id, "LIKE");
         int viewCount = noteRepository.countByAction(id, "VIEW");
+        int commentCount = noteRepository.countByAction(id, "COMMENT");
+        int collectCount = noteRepository.countByAction(id, "COLLECT");
         List<Comment> comments = noteRepository.fetchComments(id);
         return new NoteDetail(
                 note.id(),
@@ -50,6 +54,8 @@ public class NoteService {
                 note.tags(),
                 note.createdAt(),
                 likeCount,
+                commentCount,
+                collectCount,
                 viewCount,
                 comments
         );
@@ -60,6 +66,16 @@ public class NoteService {
         List<Note> items = noteRepository.fetchFeed(feedCursor, limit);
         String nextCursor = items.isEmpty() ? null : formatCursor(items.get(items.size() - 1));
         return new FeedSlice(items, nextCursor);
+    }
+
+    public FeedSummarySlice fetchFeedSummary(String cursor, int limit) {
+        FeedCursor feedCursor = parseCursor(cursor);
+        List<NoteRepository.FeedItemRow> rows = noteRepository.fetchFeedSummary(feedCursor, limit);
+        List<FeedItem> items = rows.stream()
+                .map(row -> new FeedItem(row.note(), row.likeCount(), row.commentCount(), row.collectCount()))
+                .toList();
+        String nextCursor = rows.isEmpty() ? null : formatCursor(rows.get(rows.size() - 1).note());
+        return new FeedSummarySlice(items, nextCursor);
     }
 
     private FeedCursor parseCursor(String cursor) {

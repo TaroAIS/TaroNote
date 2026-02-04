@@ -12,6 +12,9 @@ public record NoteResponse(
         List<String> images,
         String coverImage,
         List<String> tags,
+        int likeCount,
+        int commentCount,
+        int collectCount,
         Instant createdAt
 ) {
     public static NoteResponse from(Note note) {
@@ -23,6 +26,25 @@ public record NoteResponse(
                 note.images(),
                 note.coverImage(),
                 note.tags(),
+                0,
+                0,
+                0,
+                note.createdAt()
+        );
+    }
+
+    public static NoteResponse from(Note note, int likeCount, int commentCount, int collectCount) {
+        return new NoteResponse(
+                note.id(),
+                note.authorId().toString(),
+                note.title(),
+                note.content(),
+                note.images(),
+                note.coverImage(),
+                note.tags(),
+                likeCount,
+                commentCount,
+                collectCount,
                 note.createdAt()
         );
     }

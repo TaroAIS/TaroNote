@@ -37,9 +37,9 @@ public class NoteController {
     public FeedResponse feed(@RequestParam(value = "cursor", required = false) String cursor,
                              @RequestParam(value = "limit", defaultValue = "20") int limit) {
         int safeLimit = Math.min(Math.max(limit, 1), 50);
-        var slice = contentPort.fetchFeed(cursor, safeLimit);
+        var slice = contentPort.fetchFeedSummary(cursor, safeLimit);
         List<NoteResponse> items = slice.items().stream()
-                .map(NoteResponse::from)
+                .map(item -> NoteResponse.from(item.note(), item.likeCount(), item.commentCount(), item.collectCount()))
                 .toList();
         return new FeedResponse(items, slice.nextCursor());
     }

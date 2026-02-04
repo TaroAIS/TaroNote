@@ -13,6 +13,8 @@ public record NoteDetail(
         List<String> tags,
         Instant createdAt,
         int likeCount,
+        int commentCount,
+        int collectCount,
         int viewCount,
         List<Comment> comments
 ) {

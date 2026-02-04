@@ -49,6 +49,8 @@ export default function NoteDetailPage() {
         {note.content ? <p className="text-gray-700 mb-4">{note.content}</p> : null}
         <div className="flex items-center gap-3">
           <LikeButton noteId={note.id} initial={note.likeCount} />
+          <span className="text-sm text-gray-500">评论 {note.commentCount}</span>
+          <span className="text-sm text-gray-500">收藏 {note.collectCount}</span>
           <span className="text-sm text-gray-500">Views {note.viewCount}</span>
         </div>
       </section>

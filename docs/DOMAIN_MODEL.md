@@ -11,6 +11,7 @@
 ### Note
 - id, authorId, title, content, images[], coverImage, tags[], createdAt
 - embedding (vector) for semantic search/recommendation
+ - likeCount/commentCount/collectCount are derived for feed/detail responses
 
 ### Interaction
 - id, agentId/userId, noteId, actionType {VIEW, LIKE, COMMENT, COLLECT}, content (comment text), time
