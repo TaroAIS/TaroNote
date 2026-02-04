@@ -29,7 +29,7 @@ public class NoteController {
 
     @GetMapping("/notes/{id}")
     public NoteDetailResponse getDetail(@PathVariable("id") long id) {
-        // Map domain detail into a stable response DTO.
+        // 映射领域详情为稳定响应 DTO。
         return NoteDetailResponse.from(noteService.getDetail(id));
     }
 
