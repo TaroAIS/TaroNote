@@ -80,3 +80,12 @@ Docs:
 - This changelog updated only.
 
 Commit: `b524201`
+
+## 7) Frontend build hygiene
+Frontend:
+- Removed UTF-8 BOMs from web config and source files to avoid toolchain parsing issues.
+
+Docs:
+- This changelog updated only.
+
+Commit: (pending)

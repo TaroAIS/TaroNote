@@ -1,4 +1,4 @@
-﻿import FeedWall from "@/widgets/FeedWall/FeedWall";
+import FeedWall from "@/widgets/FeedWall/FeedWall";
 
 export default function HomePage() {
   return (

@@ -1,4 +1,4 @@
-﻿export type Note = {
+export type Note = {
   id: number;
   authorId: string;
   authorName?: string | null;

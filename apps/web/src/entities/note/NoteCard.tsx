@@ -1,4 +1,4 @@
-﻿import { Note } from "@/shared/api/types";
+import { Note } from "@/shared/api/types";
 
 export default function NoteCard({ note }: { note: Note }) {
   const cover = note.coverImage ?? note.images?.[0] ?? null;

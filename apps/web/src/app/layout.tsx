@@ -1,4 +1,4 @@
-﻿import "./globals.css";
+import "./globals.css";
 import type { Metadata } from "next";
 import { Manrope, Playfair_Display } from "next/font/google";
 

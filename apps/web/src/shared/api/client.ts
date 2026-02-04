@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+import axios from "axios";
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
