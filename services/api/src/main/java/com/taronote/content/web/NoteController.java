@@ -1,7 +1,6 @@
 ﻿package com.taronote.content.web;
 
 import com.taronote.common.security.SecurityUtils;
-import com.taronote.content.domain.NoteDetail;
 import com.taronote.content.service.NoteService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,8 +28,8 @@ public class NoteController {
     }
 
     @GetMapping("/notes/{id}")
-    public NoteDetail getDetail(@PathVariable("id") long id) {
-        return noteService.getDetail(id);
+    public NoteDetailResponse getDetail(@PathVariable("id") long id) {
+        return NoteDetailResponse.from(noteService.getDetail(id));
     }
 
     @GetMapping("/feed")

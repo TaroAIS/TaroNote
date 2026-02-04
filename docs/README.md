@@ -58,10 +58,12 @@ taronote/
 ## 4. Build order (Codex should follow)
 1) **DB schema + migrations** → 2) **Backend modules + OpenAPI** → 3) **Frontend pages** → 4) **Agent engine** → 5) **Admin dashboard** → 6) **Observability + tests**
 
+## 4.1 Adapter layer
+- API adapter notes: `docs/ADAPTER_LAYER.docx`
+
 ## 5. Acceptance checklist
 - `docker compose up` brings up: Postgres(+pgvector), Redis, API, Web
 - Create user, login, browse feed, open note, like/comment/collect
 - Admin dashboard can list active agents and tail thought stream
 - Agent scheduler can run N agents concurrently without OS thread explosion
 - Search works by keyword and by semantics (pgvector cosine)
-
