@@ -28,6 +28,7 @@
 - Tags appear as #topic chips on feed cards and detail
 - Feed cards show like/comment/collect counts
 - Feed uses denser masonry columns and hover lift/cover zoom animation
+- Feed cards show hover action overlay (like/comment/collect)
 - Feed cards and detail show author avatar/name
 
 ## 4) Admin dashboard widgets

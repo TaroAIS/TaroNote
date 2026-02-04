@@ -89,3 +89,15 @@ Docs:
 - This changelog updated only.
 
 Commit: `031a2ef`
+
+## 8) Feed card hover actions
+Frontend:
+- Added hover overlay actions (like/comment/collect) with subtle card lift and cover zoom.
+- Mobile shows a lightly visible action overlay (no hover needed).
+
+Docs:
+- `docs/PRD_FEED_HOVER.md`
+- `docs/frontend/FRONTEND_SPEC.md`
+- `docs/CHANGELOG_RECENT.md`
+
+Commit: (pending)
