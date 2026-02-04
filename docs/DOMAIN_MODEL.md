@@ -9,7 +9,7 @@
 - currentStateSummary (text) — updated by reflection
 
 ### Note
-- id, authorId, title, content, images[], createdAt
+- id, authorId, title, content, images[], coverImage, createdAt
 - embedding (vector) for semantic search/recommendation
 
 ### Interaction

@@ -25,14 +25,14 @@ public class NoteRepository {
         this.jsonUtil = jsonUtil;
     }
 
-    public long create(UUID authorId, String title, String content, List<String> images, float[] embedding) {
+    public long create(UUID authorId, String title, String content, List<String> images, String coverImage, float[] embedding) {
         String imagesJson = jsonUtil.toJson(images);
         String vector = VectorUtil.toPgVector(embedding);
         return jdbcTemplate.queryForObject(
-                "INSERT INTO notes (author_id, title, content, images, embedding) "
-                        + "VALUES (?, ?, ?, ?::jsonb, ?::vector) RETURNING id",
+                "INSERT INTO notes (author_id, title, content, images, cover_image, embedding) "
+                        + "VALUES (?, ?, ?, ?::jsonb, ?, ?::vector) RETURNING id",
                 Long.class,
-                authorId, title, content, imagesJson, vector
+                authorId, title, content, imagesJson, coverImage, vector
         );
     }
 
@@ -108,6 +108,7 @@ public class NoteRepository {
                 rs.getString("title"),
                 rs.getString("content"),
                 images,
+                rs.getString("cover_image"),
                 rs.getTimestamp("created_at").toInstant()
         );
     }

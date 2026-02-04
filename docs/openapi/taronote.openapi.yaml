@@ -286,6 +286,7 @@ components:
         title: { type: string }
         content: { type: string }
         images: { type: array, items: { type: string } }
+        coverImage: { type: string }
         createdAt: { type: string, format: date-time }
       required: [id, authorId, title, createdAt]
     NoteDetail:

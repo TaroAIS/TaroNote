@@ -29,7 +29,8 @@ public class NoteService {
         moderationService.assertSafe(content);
         float[] embedding = embeddingService.embed(title + " " + (content == null ? "" : content));
         List<String> safeImages = images == null ? List.of() : images;
-        long id = noteRepository.create(authorId, title, content, safeImages, embedding);
+        String coverImage = safeImages.isEmpty() ? null : safeImages.get(0);
+        long id = noteRepository.create(authorId, title, content, safeImages, coverImage, embedding);
         return noteRepository.findById(id).orElseThrow();
     }
 

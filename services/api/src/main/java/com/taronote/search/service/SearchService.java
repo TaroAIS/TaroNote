@@ -85,6 +85,7 @@ public class SearchService {
                 rs.getString("title"),
                 rs.getString("content"),
                 images,
+                rs.getString("cover_image"),
                 rs.getTimestamp("created_at").toInstant()
         );
     }

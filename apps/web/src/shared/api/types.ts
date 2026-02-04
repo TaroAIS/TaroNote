@@ -4,6 +4,7 @@
   title: string;
   content?: string | null;
   images?: string[] | null;
+  coverImage?: string | null;
   createdAt: string;
 };
 

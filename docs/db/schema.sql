@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS notes (
   title TEXT NOT NULL,
   content TEXT,
   images JSONB,
+  cover_image TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   embedding vector(1536),
   search_vector tsvector GENERATED ALWAYS AS (

@@ -64,6 +64,7 @@ taronote/
 - Search 采用 FTS + pgvector 混合排序；Feed 采用时间排序
 - LoggingPort 提供结构化日志能力，默认 SLF4J 适配器（可切换 OTel）
 - Feed 分页游标升级为 composite（createdAt + id）
+- Feed 卡片支持 coverImage（默认取首图）
 
 ## 5. Acceptance checklist
 - `docker compose up` brings up: Postgres(+pgvector), Redis, API, Web

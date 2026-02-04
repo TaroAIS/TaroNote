@@ -10,6 +10,7 @@ public record Note(
         String title,
         String content,
         List<String> images,
+        String coverImage,
         Instant createdAt
 ) {
 }

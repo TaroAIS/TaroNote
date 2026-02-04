@@ -30,6 +30,7 @@ Use Flyway or Liquibase.
 - Migrations live at `infra/db/migrations`
 - On boot, apply migrations automatically.
 - V2 adds FTS `search_vector` + GIN index and interaction indexes for feed ranking.
+- V3 adds `cover_image` for feed cover.
 
 ## 4.1 Search & Feed
 - Search uses PostgreSQL FTS + pgvector hybrid ranking.
