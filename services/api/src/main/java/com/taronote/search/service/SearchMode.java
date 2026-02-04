@@ -1,4 +1,4 @@
-﻿package com.taronote.search.service;
+package com.taronote.search.service;
 
 public enum SearchMode {
     HYBRID,

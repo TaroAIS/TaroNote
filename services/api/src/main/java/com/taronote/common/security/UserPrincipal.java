@@ -1,4 +1,4 @@
-﻿package com.taronote.common.security;
+package com.taronote.common.security;
 
 import java.util.UUID;
 

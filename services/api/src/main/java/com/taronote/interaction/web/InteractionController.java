@@ -1,4 +1,4 @@
-﻿package com.taronote.interaction.web;
+package com.taronote.interaction.web;
 
 import com.taronote.common.security.SecurityUtils;
 import com.taronote.interaction.port.InteractionPort;

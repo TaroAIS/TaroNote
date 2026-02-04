@@ -1,4 +1,4 @@
-﻿package com.taronote.content.service;
+package com.taronote.content.service;
 
 import com.taronote.common.ai.EmbeddingService;
 import com.taronote.common.moderation.ModerationService;

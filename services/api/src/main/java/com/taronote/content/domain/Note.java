@@ -1,4 +1,4 @@
-﻿package com.taronote.content.domain;
+package com.taronote.content.domain;
 
 import java.time.Instant;
 import java.util.List;

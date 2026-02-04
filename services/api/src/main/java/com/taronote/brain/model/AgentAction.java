@@ -1,4 +1,4 @@
-﻿package com.taronote.brain.model;
+package com.taronote.brain.model;
 
 public enum AgentAction {
     IGNORE,

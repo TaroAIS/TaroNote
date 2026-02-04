@@ -1,4 +1,4 @@
-﻿package com.taronote.brain.model;
+package com.taronote.brain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

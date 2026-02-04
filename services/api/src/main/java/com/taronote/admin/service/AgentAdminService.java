@@ -1,4 +1,4 @@
-﻿package com.taronote.admin.service;
+package com.taronote.admin.service;
 
 import com.taronote.admin.web.AgentStatus;
 import com.taronote.common.util.JsonUtil;

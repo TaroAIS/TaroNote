@@ -1,4 +1,4 @@
-﻿package com.taronote.content.repository;
+package com.taronote.content.repository;
 
 import com.taronote.common.util.JsonUtil;
 import com.taronote.common.util.VectorUtil;

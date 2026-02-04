@@ -1,4 +1,4 @@
-﻿package com.taronote.interaction.repository;
+package com.taronote.interaction.repository;
 
 import java.time.Instant;
 import java.util.UUID;

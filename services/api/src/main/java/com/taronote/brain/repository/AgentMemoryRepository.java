@@ -1,4 +1,4 @@
-﻿package com.taronote.brain.repository;
+package com.taronote.brain.repository;
 
 import com.taronote.brain.model.AgentMemory;
 import com.taronote.common.util.VectorUtil;

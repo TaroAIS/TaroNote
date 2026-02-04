@@ -1,4 +1,4 @@
-﻿package com.taronote.common.web;
+package com.taronote.common.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;

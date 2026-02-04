@@ -1,4 +1,4 @@
-﻿package com.taronote.brain.service;
+package com.taronote.brain.service;
 
 public enum ModelTier {
     FAST,

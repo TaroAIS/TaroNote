@@ -1,4 +1,4 @@
-﻿package com.taronote.common.observability;
+package com.taronote.common.observability;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

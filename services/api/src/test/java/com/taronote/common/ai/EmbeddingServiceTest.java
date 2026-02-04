@@ -1,4 +1,4 @@
-﻿package com.taronote.common.ai;
+package com.taronote.common.ai;
 
 import org.junit.jupiter.api.Test;
 

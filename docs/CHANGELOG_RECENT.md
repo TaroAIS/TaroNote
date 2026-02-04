@@ -69,3 +69,14 @@ Docs:
   `docs/frontend/FRONTEND_SPEC.md`, `docs/README.md`, `docs/ADAPTER_LAYER.docx`
 
 Commit: `997f386`
+
+## 6) Backend build/run stability
+Backend:
+- Removed UTF-8 BOMs that caused `javac` illegal character errors across API sources/tests.
+- OTel logging exporter now uses OTLP gRPC only (HTTP exporter class not available in current deps).
+- `taronote.logging.otlp-protocol` remains but is currently ignored; endpoint still supported.
+
+Docs:
+- This changelog updated only.
+
+Commit: (pending)

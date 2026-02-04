@@ -1,4 +1,4 @@
-﻿package com.taronote.identity.web;
+package com.taronote.identity.web;
 
 import com.taronote.identity.port.IdentityPort;
 import jakarta.validation.Valid;

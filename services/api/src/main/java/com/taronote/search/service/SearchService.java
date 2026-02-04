@@ -1,4 +1,4 @@
-﻿package com.taronote.search.service;
+package com.taronote.search.service;
 
 import com.taronote.common.ai.EmbeddingService;
 import com.taronote.common.util.JsonUtil;

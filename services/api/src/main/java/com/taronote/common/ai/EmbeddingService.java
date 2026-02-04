@@ -1,4 +1,4 @@
-﻿package com.taronote.common.ai;
+package com.taronote.common.ai;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;

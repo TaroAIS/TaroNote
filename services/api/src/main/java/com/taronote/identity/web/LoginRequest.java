@@ -1,4 +1,4 @@
-﻿package com.taronote.identity.web;
+package com.taronote.identity.web;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-﻿package com.taronote.common.moderation;
+package com.taronote.common.moderation;
 
 import java.util.List;
 import org.springframework.stereotype.Service;

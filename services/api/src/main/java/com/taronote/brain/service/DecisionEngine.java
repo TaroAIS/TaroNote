@@ -1,4 +1,4 @@
-﻿package com.taronote.brain.service;
+package com.taronote.brain.service;
 
 import com.taronote.brain.model.AgentDecision;
 import java.util.concurrent.Semaphore;

@@ -1,4 +1,4 @@
-﻿package com.taronote.content.web;
+package com.taronote.content.web;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;

@@ -1,4 +1,4 @@
-﻿package com.taronote.brain.service;
+package com.taronote.brain.service;
 
 import com.taronote.content.port.ContentPort;
 import com.taronote.interaction.port.InteractionPort;

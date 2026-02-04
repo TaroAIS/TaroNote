@@ -5,7 +5,6 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.exporter.otlp.logs.OtlpGrpcLogRecordExporter;
-import io.opentelemetry.exporter.otlp.logs.OtlpHttpLogRecordExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.logs.SdkLoggerProvider;
 import io.opentelemetry.sdk.logs.export.BatchLogRecordProcessor;
@@ -20,8 +19,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(name = "taronote.logging.mode", havingValue = "otel")
 public class OtelLoggingConfig {
-    private static final String DEFAULT_PROTOCOL = "grpc";
-
     @Bean(destroyMethod = "close")
     public SdkLoggerProvider loggerProvider(
             @Value("${spring.application.name:taronote-api}") String serviceName,
@@ -30,7 +27,7 @@ public class OtelLoggingConfig {
         Resource resource = Resource.getDefault().merge(Resource.create(Attributes.of(
                 AttributeKey.stringKey("service.name"), serviceName
         )));
-        LogRecordExporter exporter = buildExporter(endpoint, protocol);
+        LogRecordExporter exporter = buildExporter(endpoint);
         return SdkLoggerProvider.builder()
                 .setResource(resource)
                 .addLogRecordProcessor(BatchLogRecordProcessor.builder(exporter).build())
@@ -46,17 +43,9 @@ public class OtelLoggingConfig {
         return sdk;
     }
 
-    private LogRecordExporter buildExporter(String endpoint, String protocol) {
+    private LogRecordExporter buildExporter(String endpoint) {
         String resolvedEndpoint = resolveEndpoint(endpoint);
-        String resolvedProtocol = protocol == null || protocol.isBlank() ? DEFAULT_PROTOCOL : protocol.trim();
-        if ("http/protobuf".equalsIgnoreCase(resolvedProtocol)) {
-            OtlpHttpLogRecordExporter.Builder builder = OtlpHttpLogRecordExporter.builder();
-            if (!resolvedEndpoint.isBlank()) {
-                builder.setEndpoint(resolvedEndpoint);
-            }
-            return builder.build();
-        }
-        OtlpGrpcLogRecordExporter.Builder builder = OtlpGrpcLogRecordExporter.builder();
+        var builder = OtlpGrpcLogRecordExporter.builder();
         if (!resolvedEndpoint.isBlank()) {
             builder.setEndpoint(resolvedEndpoint);
         }

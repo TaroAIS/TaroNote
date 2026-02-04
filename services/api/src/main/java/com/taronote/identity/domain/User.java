@@ -1,4 +1,4 @@
-﻿package com.taronote.identity.domain;
+package com.taronote.identity.domain;
 
 import java.time.Instant;
 import java.util.UUID;

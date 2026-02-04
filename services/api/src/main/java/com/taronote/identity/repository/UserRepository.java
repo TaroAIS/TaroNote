@@ -1,4 +1,4 @@
-﻿package com.taronote.identity.repository;
+package com.taronote.identity.repository;
 
 import com.taronote.identity.domain.User;
 import com.taronote.identity.domain.UserType;

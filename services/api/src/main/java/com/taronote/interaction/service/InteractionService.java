@@ -1,4 +1,4 @@
-﻿package com.taronote.interaction.service;
+package com.taronote.interaction.service;
 
 import com.taronote.common.moderation.ModerationService;
 import com.taronote.interaction.repository.InteractionRepository;

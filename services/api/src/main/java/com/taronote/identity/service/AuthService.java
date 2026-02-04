@@ -1,4 +1,4 @@
-﻿package com.taronote.identity.service;
+package com.taronote.identity.service;
 
 import com.taronote.common.security.JwtService;
 import com.taronote.common.security.UserPrincipal;

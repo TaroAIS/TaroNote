@@ -1,4 +1,4 @@
-﻿package com.taronote.search.web;
+package com.taronote.search.web;
 
 import com.taronote.content.web.NoteResponse;
 import com.taronote.search.service.SearchMode;

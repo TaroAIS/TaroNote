@@ -1,4 +1,4 @@
-﻿package com.taronote.common.util;
+package com.taronote.common.util;
 
 public final class VectorUtil {
     private VectorUtil() {

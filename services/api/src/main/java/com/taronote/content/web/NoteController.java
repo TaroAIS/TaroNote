@@ -1,4 +1,4 @@
-﻿package com.taronote.content.web;
+package com.taronote.content.web;
 
 import com.taronote.common.security.SecurityUtils;
 import com.taronote.content.port.ContentPort;
