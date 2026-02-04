@@ -1,5 +1,6 @@
 package com.taronote.content.adapter;
 
+import com.taronote.content.domain.FeedSlice;
 import com.taronote.content.domain.Note;
 import com.taronote.content.domain.NoteDetail;
 import com.taronote.content.port.ContentPort;
@@ -44,13 +45,13 @@ public class ContentAdapter implements ContentPort {
     }
 
     @Override
-    public List<Note> fetchFeed(Long cursor, int limit) {
-        List<Note> notes = noteService.fetchFeed(cursor, limit);
+    public FeedSlice fetchFeed(String cursor, int limit) {
+        FeedSlice slice = noteService.fetchFeed(cursor, limit);
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("cursor", cursor);
         fields.put("limit", limit);
-        fields.put("resultCount", notes.size());
+        fields.put("resultCount", slice.items().size());
         loggingPort.info("content.feed", fields);
-        return notes;
+        return slice;
     }
 }

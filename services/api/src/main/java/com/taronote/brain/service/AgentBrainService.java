@@ -47,7 +47,7 @@ public class AgentBrainService {
     }
 
     public void run(UUID agentId) {
-        List<Note> feed = contentPort.fetchFeed(null, 10);
+        List<Note> feed = contentPort.fetchFeed(null, 10).items();
         if (feed.isEmpty()) {
             return;
         }

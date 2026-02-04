@@ -3,9 +3,11 @@
 import com.taronote.common.util.JsonUtil;
 import com.taronote.common.util.VectorUtil;
 import com.taronote.content.domain.Comment;
+import com.taronote.content.domain.FeedCursor;
 import com.taronote.content.domain.Note;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,10 +41,10 @@ public class NoteRepository {
         return rows.stream().findFirst();
     }
 
-    public List<Note> fetchFeed(Long cursor, int limit) {
+    public List<FeedRow> fetchFeed(FeedCursor cursor, int limit) {
         if (cursor == null) {
             return jdbcTemplate.query(
-                    "SELECT n.* FROM notes n "
+                    "SELECT n.*, COALESCE(s.score, 0) AS score FROM notes n "
                             + "LEFT JOIN ("
                             + "  SELECT note_id, "
                             + "  SUM(CASE action_type "
@@ -50,16 +52,16 @@ public class NoteRepository {
                             + "    WHEN 'COMMENT' THEN 2 "
                             + "    WHEN 'COLLECT' THEN 4 "
                             + "    WHEN 'VIEW' THEN 1 "
-                            + "    ELSE 0 END) AS score "
+                            + "    ELSE 0 END)::bigint AS score "
                             + "  FROM interactions GROUP BY note_id"
                             + ") s ON s.note_id = n.id "
                             + "ORDER BY n.created_at DESC, COALESCE(s.score, 0) DESC, n.id DESC LIMIT ?",
-                    noteRowMapper(),
+                    feedRowMapper(),
                     limit
             );
         }
         return jdbcTemplate.query(
-                "SELECT n.* FROM notes n "
+                "SELECT n.*, COALESCE(s.score, 0) AS score FROM notes n "
                         + "LEFT JOIN ("
                         + "  SELECT note_id, "
                         + "  SUM(CASE action_type "
@@ -67,14 +69,38 @@ public class NoteRepository {
                         + "    WHEN 'COMMENT' THEN 2 "
                         + "    WHEN 'COLLECT' THEN 4 "
                         + "    WHEN 'VIEW' THEN 1 "
-                        + "    ELSE 0 END) AS score "
+                        + "    ELSE 0 END)::bigint AS score "
                         + "  FROM interactions GROUP BY note_id"
                         + ") s ON s.note_id = n.id "
-                        + "WHERE n.id < ? "
+                        + "WHERE (n.created_at, COALESCE(s.score, 0), n.id) < (?::timestamptz, ?::bigint, ?::bigint) "
                         + "ORDER BY n.created_at DESC, COALESCE(s.score, 0) DESC, n.id DESC LIMIT ?",
-                noteRowMapper(),
-                cursor, limit
+                feedRowMapper(),
+                Timestamp.from(cursor.createdAt()), cursor.score(), cursor.id(), limit
         );
+    }
+
+    public Optional<FeedCursor> findFeedCursorById(long id) {
+        List<FeedCursor> rows = jdbcTemplate.query(
+                "SELECT n.created_at, COALESCE(s.score, 0) AS score, n.id FROM notes n "
+                        + "LEFT JOIN ("
+                        + "  SELECT note_id, "
+                        + "  SUM(CASE action_type "
+                        + "    WHEN 'LIKE' THEN 3 "
+                        + "    WHEN 'COMMENT' THEN 2 "
+                        + "    WHEN 'COLLECT' THEN 4 "
+                        + "    WHEN 'VIEW' THEN 1 "
+                        + "    ELSE 0 END)::bigint AS score "
+                        + "  FROM interactions GROUP BY note_id"
+                        + ") s ON s.note_id = n.id "
+                        + "WHERE n.id = ?",
+                (rs, rowNum) -> new FeedCursor(
+                        rs.getTimestamp("created_at").toInstant(),
+                        rs.getLong("score"),
+                        rs.getLong("id")
+                ),
+                id
+        );
+        return rows.stream().findFirst();
     }
 
     public List<Comment> fetchComments(long noteId) {
@@ -105,6 +131,10 @@ public class NoteRepository {
         return (rs, rowNum) -> mapNote(rs);
     }
 
+    private RowMapper<FeedRow> feedRowMapper() {
+        return (rs, rowNum) -> new FeedRow(mapNote(rs), rs.getLong("score"));
+    }
+
     private Note mapNote(ResultSet rs) throws SQLException {
         String imagesJson = rs.getString("images");
         List<String> images = jsonUtil.readStringList(imagesJson);
@@ -116,5 +146,8 @@ public class NoteRepository {
                 images,
                 rs.getTimestamp("created_at").toInstant()
         );
+    }
+
+    public record FeedRow(Note note, long score) {
     }
 }

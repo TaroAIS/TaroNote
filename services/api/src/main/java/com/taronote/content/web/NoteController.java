@@ -34,13 +34,13 @@ public class NoteController {
     }
 
     @GetMapping("/feed")
-    public FeedResponse feed(@RequestParam(value = "cursor", required = false) Long cursor,
+    public FeedResponse feed(@RequestParam(value = "cursor", required = false) String cursor,
                              @RequestParam(value = "limit", defaultValue = "20") int limit) {
         int safeLimit = Math.min(Math.max(limit, 1), 50);
-        List<NoteResponse> items = contentPort.fetchFeed(cursor, safeLimit).stream()
+        var slice = contentPort.fetchFeed(cursor, safeLimit);
+        List<NoteResponse> items = slice.items().stream()
                 .map(NoteResponse::from)
                 .toList();
-        String nextCursor = items.isEmpty() ? null : String.valueOf(items.get(items.size() - 1).id());
-        return new FeedResponse(items, nextCursor);
+        return new FeedResponse(items, slice.nextCursor());
     }
 }

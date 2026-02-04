@@ -3,11 +3,14 @@
 import com.taronote.common.ai.EmbeddingService;
 import com.taronote.common.moderation.ModerationService;
 import com.taronote.content.domain.Comment;
+import com.taronote.content.domain.FeedCursor;
+import com.taronote.content.domain.FeedSlice;
 import com.taronote.content.domain.Note;
 import com.taronote.content.domain.NoteDetail;
 import com.taronote.content.repository.NoteRepository;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,7 +52,44 @@ public class NoteService {
         );
     }
 
-    public List<Note> fetchFeed(Long cursor, int limit) {
-        return noteRepository.fetchFeed(cursor, limit);
+    public FeedSlice fetchFeed(String cursor, int limit) {
+        FeedCursor feedCursor = parseCursor(cursor);
+        List<NoteRepository.FeedRow> rows = noteRepository.fetchFeed(feedCursor, limit);
+        List<Note> items = rows.stream()
+                .map(NoteRepository.FeedRow::note)
+                .collect(Collectors.toList());
+        String nextCursor = rows.isEmpty() ? null : formatCursor(rows.get(rows.size() - 1));
+        return new FeedSlice(items, nextCursor);
+    }
+
+    private FeedCursor parseCursor(String cursor) {
+        if (cursor == null || cursor.isBlank()) {
+            return null;
+        }
+        if (cursor.contains("|")) {
+            String[] parts = cursor.split("\\|", 3);
+            if (parts.length == 3) {
+                try {
+                    long createdAtMillis = Long.parseLong(parts[0]);
+                    long score = Long.parseLong(parts[1]);
+                    long id = Long.parseLong(parts[2]);
+                    return new FeedCursor(java.time.Instant.ofEpochMilli(createdAtMillis), score, id);
+                } catch (NumberFormatException ignored) {
+                    return null;
+                }
+            }
+            return null;
+        }
+        try {
+            long id = Long.parseLong(cursor);
+            return noteRepository.findFeedCursorById(id).orElse(null);
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
+    private String formatCursor(NoteRepository.FeedRow row) {
+        long createdAtMillis = row.note().createdAt().toEpochMilli();
+        return createdAtMillis + "|" + row.score() + "|" + row.note().id();
     }
 }

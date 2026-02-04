@@ -34,6 +34,7 @@ Use Flyway or Liquibase.
 ## 4.1 Search & Feed
 - Search uses PostgreSQL FTS + pgvector hybrid ranking.
 - Feed ranking uses time + lightweight interaction heat score.
+- Feed cursor uses composite key (createdAt + score + id) for stable pagination.
 
 ## 5) Observability
 - Log fields: traceId, userId, agentId, agentRunId

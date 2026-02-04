@@ -1,5 +1,6 @@
 package com.taronote.content.port;
 
+import com.taronote.content.domain.FeedSlice;
 import com.taronote.content.domain.Note;
 import com.taronote.content.domain.NoteDetail;
 import java.util.List;
@@ -11,5 +12,5 @@ public interface ContentPort {
 
     NoteDetail getDetail(long id);
 
-    List<Note> fetchFeed(Long cursor, int limit);
+    FeedSlice fetchFeed(String cursor, int limit);
 }
