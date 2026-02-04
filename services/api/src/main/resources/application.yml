@@ -37,6 +37,8 @@ taronote:
     mode: default
   logging:
     mode: slf4j
+    otlp-endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:}
+    otlp-protocol: ${OTEL_EXPORTER_OTLP_PROTOCOL:grpc}
 
 logging:
   level:
